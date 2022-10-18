@@ -1,0 +1,17 @@
+# Assumes brew bundle has finished and installed all of the software
+
+- hosts: localhost
+  roles:
+    # Shell
+    - { role: zshell, tags: "zshell" }
+    
+    # Programming languages
+    - { role: ruby, tags: "ruby" }
+    - { role: node, tags: "node" }
+    - { role: rust, tags: "rust" }
+
+    # Editors
+    - { role: neovim, tags: "neovim" }
+    
+    # Dotfiles
+    - { role: stow, tags: "stow" }

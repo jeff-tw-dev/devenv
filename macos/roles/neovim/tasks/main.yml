@@ -1,0 +1,11 @@
+---
+
+- name: Create nvim config folder
+  file:
+    path: "{{ user.home }}/.config/nvim"
+    state: directory
+
+- name: Set init.vim
+  template:
+    src: init.vim.j2
+    dest: "{{ user.home }}/.config/nvim/init.vim"

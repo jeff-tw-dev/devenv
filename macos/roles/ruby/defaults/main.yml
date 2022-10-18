@@ -1,0 +1,2 @@
+rbenv_home: "{{ user.home }}/.rbenv"
+ruby_version: "3.0.3"

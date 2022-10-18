@@ -1,0 +1,36 @@
+---
+
+- name: Check if {{ appName }} exists
+  stat:
+    path: /Applications/{{ appName }}.app
+  register: app_exists
+
+- name: Create tmp dir
+  file:
+    path: ./tmp
+    state: directory
+  when: not app_exists.stat.exists
+
+- name: Download {{ appName }}
+  get_url:
+    url: "{{ downloadURL }}"
+    dest: "./tmp/{{ appName }}.dmg"
+  when: not app_exists.stat.exists
+
+- name: Mount image
+  command: hdiutil attach ./tmp/{{ appName }}.dmg -nobrowse -mountpoint ./tmp/{{ appName }}
+  when: not app_exists.stat.exists
+
+- name: Copy {{ appName }}
+  shell: cp -aR ./tmp/{{ appName }}/*.app /Applications/{{ appName }}.app
+  when: not app_exists.stat.exists
+
+- name: Unmount image
+  command: hdiutil detach ./tmp/{{ appName }}/
+  when: not app_exists.stat.exists
+
+- name: Delete tmp dir
+  file:
+    path: ./tmp
+    state: absent
+  when: not app_exists.stat.exists
