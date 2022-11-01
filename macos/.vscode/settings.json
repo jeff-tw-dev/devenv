@@ -1,0 +1,40 @@
+{
+    "vim.insertModeKeyBindings": [
+        {
+            "before": [
+                "j",
+                "j"
+            ],
+            "after": [
+                "<Esc>"
+            ]
+        }
+    ],
+    "vim.easymotion": true,
+    "vim.leader": "-",
+    "editor.fontFamily": "Monaco, Menlo, 'Courier New', monospace",
+    "editor.fontWeight": "400",
+    "editor.fontSize": 13,
+    "diffEditor.ignoreTrimWhitespace": false,
+    "workbench.iconTheme": "vscode-icons",
+    "eslint.format.enable": true,
+    "diffEditor.codeLens": true,
+    "editor.minimap.renderCharacters": true,
+    "editor.bracketPairColorization.enabled": true,
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact"
+    ],
+    "editor.suggest.showStatusBar": true,
+    "editor.suggest.localityBonus": true,
+    "editor.snippetSuggestions": "top",
+    "tailwindCSS.emmetCompletions": true,
+    "tailwindCSS.includeLanguages": {
+        "plaintext": "javascript"
+    },
+    "emmet.includeLanguages": {
+        "javascript": "javascriptreact"
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "recommendations": [
+        "EditorConfig.EditorConfig",
+        "oderwat.indent-rainbow",
+        "christian-kohler.path-intellisense",
+        "jebbs.plantuml",
+        "mblode.twig-language-2",
+        "Vue.volar",
+        "ms-azuretools.vscode-docker",
+        "eamodio.gitlens",
+        "WallabyJs.console-ninja",
+        "astro-build.astro-vscode"
+    ]
+}
