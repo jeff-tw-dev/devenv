@@ -7,7 +7,7 @@ if empty(glob('~/.config/nvim/autoload/plug.vim'))
   augroup END
 endif
 
-let mapleader = ","
+let mapleader = " "
 
 call plug#begin('~/.config/nvim/plugged')
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,6 +29,18 @@ Plug 'bkad/CamelCaseMotion'
 Plug 'tpope/vim-sleuth'
 " Language Server
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" CoC extensions
+let g:coc_global_extensions = ['coc-tsserver']
+" Remap keys for applying codeAction to the current line.
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Apply AutoFix to problem on the current line.
+nmap <leader>cf  <Plug>(coc-fix-current)
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
 
 " ---------------------------------------------------------------------------------------------------------------------
 " JS (ES6, React)
@@ -185,6 +197,7 @@ endif
 "NERDTree UI improvements
 let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
+let NERDTreeShowHidden = 1
 
 "Start NERDTree if no files or directory selected
 autocmd StdinReadPre * let s:std_in=1
@@ -208,6 +221,7 @@ nmap <leader>l :wincmd l<CR>
 
 "Ctrl P
 nmap <leader>lf :CtrlPMRU<CR>
+let g:ctrlp_show_hidden=1
 
 " ======================================================================================================================
 " 3.0 Color and highlighting settings
@@ -232,6 +246,10 @@ hi! link BufTabLineCurrent Identifier
 hi! link BufTabLineActive Comment
 hi! link BufTabLineHidden Comment
 hi! link BufTabLineFill Comment
+nnoremap <leader>a :bprev<CR>
+nnoremap <leader>d :bnext<CR>
+nnoremap <leader>r :b#<CR>
+nnoremap <leader>w :bd<CR>
 
 inoremap jj <Esc>
 nnoremap <leader>ev :vsplit ~/.config/nvim/init.vim<CR>
