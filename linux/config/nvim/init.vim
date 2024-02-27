@@ -31,11 +31,11 @@ Plug 'tpope/vim-sleuth'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " CoC extensions
 let g:coc_global_extensions = ['coc-tsserver']
-" Remap keys for applying codeAction to the current line
+" Remap keys for applying codeAction to the current line.
 nmap <leader>ac  <Plug>(coc-codeaction)
-" Apply AutoFix to problem on the current line
+" Apply AutoFix to problem on the current line.
 nmap <leader>cf  <Plug>(coc-fix-current)
-" GoTo code navigation
+" GoTo code navigation.
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
@@ -132,6 +132,9 @@ Plug 'junegunn/fzf.vim'
 Plug 'chentoast/marks.nvim'
 " Git integration
 Plug 'tpope/vim-fugitive'
+" Rainbow Parenthesis
+Plug 'luochen1990/rainbow'
+let g:rainbow_active = 1 "set to 0 if you want to enable it later via :RainbowToggle
 
 " ---------------------------------------------------------------------------------------------------------------------
 " Colorschemes
@@ -261,7 +264,10 @@ let g:ctrlp_show_hidden=1
 " 3.0 Color and highlighting settings
 " ======================================================================================================================
 " Color scheme
-colorscheme hardhacker 
+let g:tokyonight_style = 'night' " available: night, storm
+let g:tokyonight_enable_italic = 1
+
+colorscheme tokyonight
 
 " Syntax highlighting
 syntax on
@@ -287,7 +293,7 @@ nnoremap <leader>w :bd<CR>
 " Remap some window operations
 " Spliting
 nnoremap <leader>v :wincmd v<CR>
-nnoremap <leader>t :wincmd t<CR>
+nnoremap <leader>t :wincmd s<CR>
 " Change window layout
 nnoremap <leader>q :wincmd q<CR>
 nnoremap <leader>H :wincmd H<CR>
