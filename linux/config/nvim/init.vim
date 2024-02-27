@@ -128,6 +128,7 @@ Plug 'kien/ctrlp.vim'
 " Faster Fuzzy Search
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+nnoremap <leader>f :Ag<CR>
 " Improve Vim Mark
 Plug 'chentoast/marks.nvim'
 " Git integration
