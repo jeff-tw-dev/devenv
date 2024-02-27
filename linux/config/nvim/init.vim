@@ -279,6 +279,9 @@ match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 " Highlight term cursor differently
 highlight TermCursor ctermfg=green guifg=green
 
+" Autosave
+autocmd InsertLeave * :w!
+
 " Remove underline in folded lines
 hi! Folded term=NONE cterm=NONE gui=NONE ctermbg=NONE
 
