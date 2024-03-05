@@ -8,7 +8,6 @@ if empty(glob('~/.config/nvim/autoload/plug.vim'))
 endif
 
 let mapleader = " "
-
 call plug#begin('~/.config/nvim/plugged')
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " 1.1 Plugin list
@@ -83,6 +82,8 @@ Plug 'honza/dockerfile.vim'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 " Rust
 Plug 'rust-lang/rust.vim'
+" Elixir
+Plug 'elixir-editors/vim-elixir'
 
 " ---------------------------------------------------------------------------------------------------------------------
 " Interface improving
@@ -128,7 +129,8 @@ Plug 'kien/ctrlp.vim'
 " Faster Fuzzy Search
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-nnoremap <leader>f :Ag<CR>
+nnoremap <leader><leader>f :Ag<CR>
+nnoremap <leader>f :Files<CR>
 " Improve Vim Mark
 Plug 'chentoast/marks.nvim'
 " Git integration
@@ -279,6 +281,24 @@ match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 " Highlight term cursor differently
 highlight TermCursor ctermfg=green guifg=green
 
+" Multiple Cursor Editing
+nmap <expr> <silent> <C-d> <SID>select_current_word()
+function! s:select_current_word()
+  if !get(b:, 'coc_cursors_activated', 0)
+    return "\<Plug>(coc-cursors-word)"
+  endif
+  return "*\<Plug>(coc-cursors-word):nohlsearch\<CR>"
+endfunc
+" Display type on hover
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  end
+endfunction
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
 " Autosave
 autocmd InsertLeave * :w!
 
@@ -309,3 +329,4 @@ inoremap jj <Esc>
 nnoremap <leader>ev :vsplit ~/.config/nvim/init.vim<CR>
 nnoremap <leader>sv :source ~/.config/nvim/init.vim<CR>
 au BufNewFile,BufRead Jenkinsfile setf groovy
+
