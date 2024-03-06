@@ -1,0 +1,12 @@
+{
+	"diagnostic.enable": true,
+	"diagnostic.virtualText": true,
+	"diagnostic.virtualTextCurrentLineOnly": true,
+	"codeLens.enable": true,
+	"languageserver": {
+	  "elixirLS": {
+	    "command": "~/.config/nvim/elixir-ls/release/language_server.sh",
+	    "filetypes": ["elixir", "eelixir"]
+	  }
+	}
+}
