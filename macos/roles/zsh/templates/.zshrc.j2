@@ -86,10 +86,6 @@ export NVM_LAZY_LOAD=true
 # =====================================================================================================================
 alias vim='nvim'
 alias gbd='git push origin --delete $(git_current_branch)'
-alias gcleanup=$'git fetch -p && git branch -v | grep \'gone\' | awk \'{print $1}\' | xargs -n 1 git branch -D'
-alias dockerstopall='docker stop $(docker ps -a -q)'
-alias dockerrmall='docker rm $(docker ps -a -q)'
-alias dockerrmidangling='docker rmi -f $(docker images -f "dangling=true" -q)'
 alias cat='bat'
 alias help='tldr'
 alias q='exit'
@@ -98,27 +94,19 @@ alias lg='lazygit'
 alias ld='lazydocker'
 alias zshrc='vim $HOME/.zshrc'
 alias rosetta='arch -x86_64'
-# gcloud and docker context
-alias gaccount='gcloud config configurations activate'
-alias gclist='gcloud config configurations list'
-alias gcstart='gcloud compute instances start'
-alias gcstop='gcloud compute instances stop'
-alias dcontext='docker context use'
 alias py='python3'
-
-eval "$(fnm env --use-on-cd)"
-
+. /opt/homebrew/etc/profile.d/z.sh
 # pnpm
-export PNPM_HOME="/Users/jeffhsu/Library/pnpm"
+export PNPM_HOME="$HOME/Library/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
 
 # bun completions
-[ -s "/Users/jeffhsu/.bun/_bun" ] && source "/Users/jeffhsu/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
-export PATH="$PATH:/Users/jeffhsu/flutter/bin"
+export PATH="$PATH:$HOME/flutter/bin"
 
-[[ -s "/Users/jeffhsu/.gvm/scripts/gvm" ]] && source "/Users/jeffhsu/.gvm/scripts/gvm"
+[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"

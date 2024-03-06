@@ -3,7 +3,7 @@
 - hosts: localhost
   roles:
     # Shell
-    - { role: zshell, tags: "zshell" }
+    - { role: zsh, tags: "zsh" }
     
     # Programming languages
     # - { role: ruby, tags: "ruby" }
@@ -11,4 +11,4 @@
     - { role: rust, tags: "rust" }
 
     # Editors
-    - { role: neovim, tags: "neovim" }
+    - { role: nvim, tags: "neovim" }
