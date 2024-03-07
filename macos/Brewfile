@@ -8,49 +8,65 @@ tap 'jesseduffield/lazygit'
 tap 'norwoodj/tap'
 tap 'mongodb/brew'
 
+# === Misc ===
+brew 'tldr'
+brew 'hugo'
+brew 'mas'
+brew 'ffmpeg'
+
+# === Environment ===
+brew 'zsh'
+brew 'neovim'
+brew 'ncdu'
+brew 'stow'
+brew 'htop'
 brew 'ansible'
-brew 'bat'
 brew 'coreutils'
 brew 'direnv'
-brew 'fzf'
-brew 'ag'
-brew 'git'
-brew 'neovim'
-brew 'terraform'
-brew 'tldr'
-brew 'zsh'
-brew 'hugo'
-brew 'htop'
-brew 'jq'
-brew 'git-lfs'
-brew 'gnu-sed'
-brew 'gnupg'
-brew 'go'
-brew 'grep'
-brew 'kubectx'
-brew 'lazydocker'
-brew 'lazygit'
-brew 'mas'
-brew 'mkcert'
-brew 'ncdu'
-brew 'pass'
-brew 'pre-commit'
 brew 'rbenv'
-brew 'sops'
-brew 'stow'
-brew 'wget'
-brew 'yarn'
-brew 'fd'
-brew 'ffmpeg'
-brew 'ghq'
-brew 'tig'
-brew 'md5sha1sum'
+
+# === Network ===
 brew 'curl'
 brew 'httpie'
-brew 'z'
-brew 'commitizen'
-brew 'pnpm'
+brew 'wget'
 
+# === Cloud ===
+brew 'terraform'
+brew 'kubectx'
+brew 'lazydocker'
+
+# === File System ===
+brew 'z'
+brew 'fzf' # Fuzzy file searching
+brew 'ag' # Fuzzy file content searching
+brew 'fd' # The better find command
+brew 'jq' # JSON utils
+brew 'gnu-sed'
+brew 'grep'
+brew 'bat'
+
+# === Git ===
+brew 'git'
+brew 'git-lfs'
+brew 'lazygit'
+brew 'pre-commit'
+brew 'ghq'
+# brew 'commitizen'
+
+# === Encryption ===
+brew 'gnupg'
+brew 'mkcert'
+brew 'pass'
+brew 'md5sha1sum'
+brew 'sops'
+
+# === Programming Language ===
+brew 'elixir'
+brew 'go'
+brew 'pnpm'
+brew 'yarn'
+
+# === Cask ===
 cask 'docker'
 cask 'ngrok'
 cask 'iterm2'
