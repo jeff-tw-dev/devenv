@@ -117,11 +117,7 @@ let g:lightline = {
     \}
 
 Plug 'ap/vim-buftabline'
-" Colorscheme
-" Plug 'cocopon/iceberg'
-Plug 'namrabtw/rusty.nvim', { 'branch': 'main' }
-Plug 'ghifarit53/tokyonight-vim' 
-Plug 'hardhackerlabs/theme-vim', { 'as': 'hardhacker' }
+
 " Easymotion
 Plug 'easymotion/vim-easymotion'
 " File Search
@@ -162,18 +158,30 @@ nnoremap <leader>xd <cmd>TroubleToggle document_diagnostics<cr>
 nnoremap <leader>xq <cmd>TroubleToggle quickfix<cr>
 nnoremap <leader>xl <cmd>TroubleToggle loclist<cr>
 nnoremap gR <cmd>TroubleToggle lsp_references<cr>
-" ---------------------------------------------------------------------------------------------------------------------
-" Colorschemes
-" ---------------------------------------------------------------------------------------------------------------------
 
+" Editing
+Plug 'kylechui/nvim-surround'
+Plug 'xiyaowong/transparent.nvim'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
+" lspsaga
+" Plug 'nvimdev/lspsaga.nvim'
+
+" Colorschemes
 " Base16
 Plug 'chriskempson/base16-vim'
 
+" Colorscheme
+" Plug 'cocopon/iceberg'
+Plug 'namrabtw/rusty.nvim', { 'branch': 'main' }
+Plug 'ghifarit53/tokyonight-vim' 
+Plug 'shatur/neovim-ayu'
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
+Plug 'ellisonleao/gruvbox.nvim'
+
 call plug#end()
 
-" Lua plugins setup
-lua require("toggleterm").setup()
-lua require("trouble").setup()
+
 " ======================================================================================================================
 " 2.0 Basic settings (Neovim defaults: https://neovim.io/doc/user/vim_diff.html#nvim-option-defaults)
 " ======================================================================================================================
@@ -296,7 +304,11 @@ let g:ctrlp_show_hidden=1
 let g:tokyonight_style = 'night' " available: night, storm
 let g:tokyonight_enable_italic = 1
 
-colorscheme tokyonight
+" lua require("ayu").colorscheme()
+" colorscheme tokyonight
+"catppuccin catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
+colorscheme ayu 
+" colorscheme catppuccin-macchiato
 
 " Syntax highlighting
 syntax on
@@ -306,6 +318,7 @@ match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 
 " Highlight term cursor differently
 highlight TermCursor ctermfg=green guifg=green
+hi Visual  guifg=White guibg=GreenYellow gui=none
 
 " Multiple Cursor Editing
 nmap <expr> <silent> <C-d> <SID>select_current_word()
@@ -356,3 +369,55 @@ nnoremap <leader>ev :vsplit ~/.config/nvim/init.vim<CR>
 nnoremap <leader>sv :source ~/.config/nvim/init.vim<CR>
 au BufNewFile,BufRead Jenkinsfile setf groovy
 
+" Lua plugins setup
+lua require("toggleterm").setup()
+lua require("trouble").setup()
+lua require("nvim-surround").setup()
+lua require("transparent").setup()
+lua require("marks").setup()
+
+lua <<EOF 
+require ('nvim-treesitter.configs').setup {
+  highlight = { enable = true },
+  indent = { enable = true },
+  ensure_installed = {
+      'c',
+      'cpp',
+      'c_sharp',
+      'rust',
+      'go',
+      'gomod',
+      'proto',
+      'templ',
+      'python',
+      'swift',
+      'java',
+      'jsdoc',
+      'typescript',
+      'javascript',
+      'tsx',
+      'css',
+      'scss',
+      'html',
+      'astro',
+      'vue',
+      'svelte',
+      'graphql',
+      'prisma',
+      'elixir',
+      'heex',
+      'eex',
+      'yaml',
+      'toml',
+      'json',
+      'xml',
+      'markdown',
+      'terraform',
+      'dockerfile',
+      'sql',
+      'ini',
+      'ssh_config',
+      'make',
+      'cmake'
+  }
+}
