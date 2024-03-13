@@ -95,11 +95,16 @@ alias ld='lazydocker'
 alias zshrc='vim $HOME/.zshrc'
 alias rosetta='arch -x86_64'
 alias py='python3'
+. /opt/homebrew/etc/profile.d/z.sh
+
+alias j='cd $(ghq list -p | fzf -1 -e)'
 
 # pnpm
 export PNPM_HOME="/Users/jeffhsu/Library/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
+
+export GHQ_ROOT="$HOME/Code"
 
 # bun completions
 [ -s "/Users/jeffhsu/.bun/_bun" ] && source "/Users/jeffhsu/.bun/_bun"

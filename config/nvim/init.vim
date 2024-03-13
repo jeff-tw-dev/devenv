@@ -90,11 +90,12 @@ Plug 'elixir-editors/vim-elixir'
 " ---------------------------------------------------------------------------------------------------------------------
 
 " Nerdtree file browser
-Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeFind', 'NERDTreeToggle'] }
+" Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeFind', 'NERDTreeToggle'] }
 " Nerdtree git status
-Plug 'Xuyuanp/nerdtree-git-plugin'
+" Plug 'Xuyuanp/nerdtree-git-plugin'
 " File icon
-Plug 'ryanoasis/vim-devicons'
+" Plug 'ryanoasis/vim-devicons'
+
 " Lightline (simple status line)
 Plug 'itchyny/lightline.vim'
 " Add current branch into statusline
@@ -178,6 +179,12 @@ Plug 'ghifarit53/tokyonight-vim'
 Plug 'shatur/neovim-ayu'
 Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 Plug 'ellisonleao/gruvbox.nvim'
+
+" Tree
+Plug 'nvim-neo-tree/neo-tree.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-tree/nvim-web-devicons'
+Plug 'MuifTanjim/nui.nvim'
 
 call plug#end()
 
@@ -266,25 +273,27 @@ if has('termguicolors')
 endif
 
 " -----------------------------------------------------
-" 2.8 NERDTree settings
+" 2.8 File Tree settings
 " -----------------------------------------------------
 "NERDTree UI improvements
-let NERDTreeMinimalUI = 1
-let NERDTreeDirArrows = 1
-let NERDTreeShowHidden = 1
+" let NERDTreeMinimalUI = 1
+" let NERDTreeDirArrows = 1
+" let NERDTreeShowHidden = 1
+" 
+" "Start NERDTree if no files or directory selected
+" autocmd StdinReadPre * let s:std_in=1
+" autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTreeToggle' argv()[0] | wincmd p | ene | endif
+" 
+" "Close vim if only NERDTree is open
+" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree")) | q | endif
+" 
+" "Ctrl+n NERDTree mapping
+" nnoremap wleaderwnt :NERDTreeToggle<CR>
+" 
+" "NERDTree on the left
+" let g:NERDTreeWinPos = "left"
 
-"Start NERDTree if no files or directory selected
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTreeToggle' argv()[0] | wincmd p | ene | endif
-
-"Close vim if only NERDTree is open
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree")) | q | endif
-
-"Ctrl+n NERDTree mapping
-nnoremap <leader>nt :NERDTreeToggle<CR>
-
-"NERDTree on the left
-let g:NERDTreeWinPos = "left"
+nnoremap <leader>nt :Neotree toggle<CR>
 
 " -----------------------------------------------------
 " 2.9 Navigation
@@ -375,6 +384,17 @@ lua require("trouble").setup()
 lua require("nvim-surround").setup()
 lua require("transparent").setup()
 lua require("marks").setup()
+lua <<EOF
+require ('neo-tree').setup {
+  filesystem = {
+    filtered_items = {
+      hide_dotfiles = false,
+      hide_gitignored = false,
+      hide_hidden = false
+      }
+    }
+  }
+EOF
 
 lua <<EOF 
 require ('nvim-treesitter.configs').setup {
