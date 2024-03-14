@@ -7,6 +7,10 @@
 	  "elixirLS": {
 	    "command": "~/.config/nvim/elixir-ls/release/language_server.sh",
 	    "filetypes": ["elixir", "eelixir"]
-	  }
+	  },
+	  "tsserver": {
+	    "enable": true,
+	    "filetypes": ["typescript", "tsx", "javascript"],
+	  },
 	}
 }

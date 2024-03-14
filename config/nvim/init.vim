@@ -8,6 +8,7 @@ if empty(glob('~/.config/nvim/autoload/plug.vim'))
 endif
 
 let mapleader = " "
+
 call plug#begin('~/.config/nvim/plugged')
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " 1.1 Plugin list
@@ -159,6 +160,7 @@ nnoremap <leader>xd <cmd>TroubleToggle document_diagnostics<cr>
 nnoremap <leader>xq <cmd>TroubleToggle quickfix<cr>
 nnoremap <leader>xl <cmd>TroubleToggle loclist<cr>
 nnoremap gR <cmd>TroubleToggle lsp_references<cr>
+" nmap <silent> gL <cmd>call coc#rpc#request('fillDiagnostics', [bufnr('%')])<CR><cmd>Trouble loclist<CR>
 
 " Editing
 Plug 'kylechui/nvim-surround'
@@ -348,6 +350,7 @@ endfunction
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 " Autosave
+" BUG: After edit file in the neo-tree window, this cmd will be trigger but cause error (can't write)
 autocmd InsertLeave * :w!
 
 " Remove underline in folded lines
@@ -385,18 +388,33 @@ lua require("nvim-surround").setup()
 lua require("transparent").setup()
 lua require("marks").setup()
 lua <<EOF
-require ('neo-tree').setup {
-  filesystem = {
-    filtered_items = {
-      hide_dotfiles = false,
-      hide_gitignored = false,
-      hide_hidden = false
+  config = function ()
+    -- If you want icons for diagnostic errors, you'll need to define them somewhere:
+    vim.fn.sign_define("DiagnosticSignError",
+      {text = " ", texthl = "DiagnosticSignError"})
+    vim.fn.sign_define("DiagnosticSignWarn",
+      {text = " ", texthl = "DiagnosticSignWarn"})
+    vim.fn.sign_define("DiagnosticSignInfo",
+      {text = " ", texthl = "DiagnosticSignInfo"})
+    vim.fn.sign_define("DiagnosticSignHint",
+      {text = "󰌵", texthl = "DiagnosticSignHint"})
+
+    require ('neo-tree').setup {
+      close_if_last_window = true,
+      enable_git_status = true,
+      enable_diagnostics = true,
+      filesystem = {
+        filtered_items = {
+          hide_dotfiles = false,
+          hide_gitignored = false,
+          hide_hidden = false
+          }
+        }
       }
-    }
-  }
+  end
 EOF
 
-lua <<EOF 
+lua <<EOF
 require ('nvim-treesitter.configs').setup {
   highlight = { enable = true },
   indent = { enable = true },
@@ -441,3 +459,4 @@ require ('nvim-treesitter.configs').setup {
       'cmake'
   }
 }
+EOF

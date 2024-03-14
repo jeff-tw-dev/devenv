@@ -1,0 +1,28 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{js,jsx,ts,tsx,json,py}]
+charset = utf-8
+
+[*.{js,jsx,ts,tsx,json}]
+indent_style = space
+indent_size = 2
+
+[*.py]
+indent_style = space
+indent_size = 4
+
+[*.{ex, eex, heex, rs}]
+indent_style = space
+indent_size = 4
+
+[*.go]
+indent_style = space
+indent_size = 8
+
+
+
