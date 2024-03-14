@@ -11,6 +11,6 @@
 	  "tsserver": {
 	    "enable": true,
 	    "filetypes": ["typescript", "tsx", "javascript"],
-	  },
+	  }
 	}
 }

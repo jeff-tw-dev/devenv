@@ -186,7 +186,8 @@ Plug 'ellisonleao/gruvbox.nvim'
 Plug 'nvim-neo-tree/neo-tree.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-tree/nvim-web-devicons'
-Plug 'MuifTanjim/nui.nvim'
+Plug 'MunifTanjim/nui.nvim'
+Plug 's1n7ax/nvim-window-picker'
 
 call plug#end()
 
@@ -387,6 +388,25 @@ lua require("trouble").setup()
 lua require("nvim-surround").setup()
 lua require("transparent").setup()
 lua require("marks").setup()
+
+lua <<EOF
+config = function()
+      require 'window-picker'.setup({
+          filter_rules = {
+              include_current_win = false,
+              autoselect_one = true,
+              -- filter using buffer options
+              bo = {
+                  -- if the file type is one of following, the window will be ignored
+                  filetype = { 'neo-tree', "neo-tree-popup", "notify" },
+                  -- if the buffer type is one of following, the window will be ignored
+                  buftype = { 'terminal', "quickfix" },
+              },
+      },
+  })
+  end
+EOF
+
 lua <<EOF
   config = function ()
     -- If you want icons for diagnostic errors, you'll need to define them somewhere:
