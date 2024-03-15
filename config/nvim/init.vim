@@ -42,6 +42,9 @@ nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
 
+Plug 'williamboman/mason.nvim'
+Plug 'neovim/nvim-lspconfig'
+
 " ---------------------------------------------------------------------------------------------------------------------
 " JS (ES6, React)
 " ---------------------------------------------------------------------------------------------------------------------
@@ -187,7 +190,6 @@ Plug 'nvim-neo-tree/neo-tree.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'MunifTanjim/nui.nvim'
-Plug 's1n7ax/nvim-window-picker'
 
 call plug#end()
 
@@ -388,24 +390,7 @@ lua require("trouble").setup()
 lua require("nvim-surround").setup()
 lua require("transparent").setup()
 lua require("marks").setup()
-
-lua <<EOF
-config = function()
-      require 'window-picker'.setup({
-          filter_rules = {
-              include_current_win = false,
-              autoselect_one = true,
-              -- filter using buffer options
-              bo = {
-                  -- if the file type is one of following, the window will be ignored
-                  filetype = { 'neo-tree', "neo-tree-popup", "notify" },
-                  -- if the buffer type is one of following, the window will be ignored
-                  buftype = { 'terminal', "quickfix" },
-              },
-      },
-  })
-  end
-EOF
+lua require("mason").setup()
 
 lua <<EOF
   config = function ()
@@ -429,6 +414,10 @@ lua <<EOF
           hide_gitignored = false,
           hide_hidden = false
           }
+        },
+        follow_current_file = {
+          enabled = true,
+          leave_dirs_open = true
         }
       }
   end
