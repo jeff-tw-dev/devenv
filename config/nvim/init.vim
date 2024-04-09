@@ -6,7 +6,6 @@ if empty(glob('~/.config/nvim/autoload/plug.vim'))
     autocmd VimEnter * PlugInstall
   augroup END
 endif
-
 let mapleader = " "
 
 call plug#begin('~/.config/nvim/plugged')
@@ -25,6 +24,12 @@ Plug 'cohama/lexima.vim'
 Plug 'tpope/vim-commentary'
 " CamelCase and snake_case motions
 Plug 'bkad/CamelCaseMotion'
+omap <silent> iw <Plug>CamelCaseMotion_iw
+xmap <silent> iw <Plug>CamelCaseMotion_iw
+omap <silent> ib <Plug>CamelCaseMotion_ib
+xmap <silent> ib <Plug>CamelCaseMotion_ib
+omap <silent> ie <Plug>CamelCaseMotion_ie
+xmap <silent> ie <Plug>CamelCaseMotion_ie
 " Heuristically set indent settings
 Plug 'tpope/vim-sleuth'
 " Language Server
@@ -44,6 +49,8 @@ inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
 
 Plug 'williamboman/mason.nvim'
 Plug 'neovim/nvim-lspconfig'
+
+Plug 'github/copilot.vim'
 
 " ---------------------------------------------------------------------------------------------------------------------
 " JS (ES6, React)
@@ -84,6 +91,7 @@ Plug 'tpope/vim-git'
 Plug 'honza/dockerfile.vim'
 " Go
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+let g:go_def_mapping_enabled = 0
 " Rust
 Plug 'rust-lang/rust.vim'
 " Elixir
@@ -303,9 +311,6 @@ nnoremap <leader>nt :Neotree toggle<CR>
 " -----------------------------------------------------
 " 2.9 Navigation
 " -----------------------------------------------------
-"Navigation between windows
-nmap <leader>h :wincmd h<CR>
-nmap <leader>l :wincmd l<CR>
 
 "Ctrl P
 nmap <leader>lf :CtrlPMRU<CR>
@@ -315,8 +320,7 @@ let g:ctrlp_show_hidden=1
 " 3.0 Color and highlighting settings
 " ======================================================================================================================
 " Color scheme
-let g:tokyonight_style = 'night' " available: night, storm
-let g:tokyonight_enable_italic = 1
+let g:tokyonight_style = 'night' " available: night, storm let g:tokyonight_enable_italic = 1
 
 " lua require("ayu").colorscheme()
 " colorscheme tokyonight
@@ -369,9 +373,14 @@ nnoremap <leader>d :bnext<CR>
 nnoremap <leader>r :b#<CR>
 nnoremap <leader>w :bd<CR>
 " Remap some window operations
+"Navigation between windows
+nmap <leader>h :wincmd h<CR>
+nmap <leader>l :wincmd l<CR>
+nmap <leader>j :wincmd j<CR>
+nmap <leader>k :wincmd k<CR>
 " Spliting
 nnoremap <leader>v :wincmd v<CR>
-nnoremap <leader>t :wincmd s<CR>
+nnoremap <leader>c :wincmd s<CR>
 " Change window layout
 nnoremap <leader>q :wincmd q<CR>
 nnoremap <leader>H :wincmd H<CR>
@@ -393,7 +402,62 @@ lua require("marks").setup()
 lua require("mason").setup()
 
 lua <<EOF
-  config = function ()
+  local lspconfig = require("lspconfig")
+  vim.filetype.add({ extension = { templ = "templ" } })
+
+  -- Use a loop to conveniently call 'setup' on multiple servers and
+  -- map buffer local keybindings when the language server attaches
+
+  local servers = { 'rust_analyzer', 'gopls', 'ccls', 'cmake', 'tsserver', 'templ' }
+  for _, lsp in ipairs(servers) do
+    lspconfig[lsp].setup({
+      on_attach = on_attach,
+      capabilities = capabilities,
+    })
+  end
+
+  lspconfig.html.setup({
+      on_attach = on_attach,
+      capabilities = capabilities,
+      filetypes = { "html", "templ", "pug" },
+  })
+
+  lspconfig.tailwindcss.setup({
+      on_attach = on_attach,
+      capabilities = capabilities,
+      filetypes = { "templ", "astro", "javascript", "typescript", "react" },
+      init_options = { userLanguages = { templ = "html" } },
+  })
+EOF
+
+lua <<EOF
+    require ('neo-tree').setup {
+      close_if_last_window = false,
+      filesystem = {
+          filtered_items = {
+            visible = true,
+            hide_dotfiles = false,
+            hide_gitignored = false
+          },
+          follow_current_file = {
+            enabled = true,
+            leave_dirs_open = true
+          }
+      },
+      follow_current_file = {
+        enabled = true,
+        leave_dirs_open = true
+      },
+      buffer = {
+        follow_current_file = {
+          enabled = true,
+        },
+      },
+      window = {
+        width = 30
+      }
+    }
+
     -- If you want icons for diagnostic errors, you'll need to define them somewhere:
     vim.fn.sign_define("DiagnosticSignError",
       {text = " ", texthl = "DiagnosticSignError"})
@@ -403,24 +467,6 @@ lua <<EOF
       {text = " ", texthl = "DiagnosticSignInfo"})
     vim.fn.sign_define("DiagnosticSignHint",
       {text = "󰌵", texthl = "DiagnosticSignHint"})
-
-    require ('neo-tree').setup {
-      close_if_last_window = true,
-      enable_git_status = true,
-      enable_diagnostics = true,
-      filesystem = {
-        filtered_items = {
-          hide_dotfiles = false,
-          hide_gitignored = false,
-          hide_hidden = false
-          }
-        },
-        follow_current_file = {
-          enabled = true,
-          leave_dirs_open = true
-        }
-      }
-  end
 EOF
 
 lua <<EOF
@@ -446,6 +492,7 @@ require ('nvim-treesitter.configs').setup {
       'css',
       'scss',
       'html',
+      'pug',
       'astro',
       'vue',
       'svelte',
