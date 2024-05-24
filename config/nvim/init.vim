@@ -22,14 +22,6 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'cohama/lexima.vim'
 " Commenting support (gc)
 Plug 'tpope/vim-commentary'
-" CamelCase and snake_case motions
-Plug 'bkad/CamelCaseMotion'
-omap <silent> iw <Plug>CamelCaseMotion_iw
-xmap <silent> iw <Plug>CamelCaseMotion_iw
-omap <silent> ib <Plug>CamelCaseMotion_ib
-xmap <silent> ib <Plug>CamelCaseMotion_ib
-omap <silent> ie <Plug>CamelCaseMotion_ie
-xmap <silent> ie <Plug>CamelCaseMotion_ie
 " Heuristically set indent settings
 Plug 'tpope/vim-sleuth'
 " Language Server
@@ -107,6 +99,9 @@ Plug 'elixir-editors/vim-elixir'
 " Plug 'Xuyuanp/nerdtree-git-plugin'
 " File icon
 " Plug 'ryanoasis/vim-devicons'
+"
+Plug 'lukas-reineke/indent-blankline.nvim'
+Plug 'TheGLander/indent-rainbowline.nvim'
 
 " Lightline (simple status line)
 Plug 'itchyny/lightline.vim'
@@ -129,7 +124,7 @@ let g:lightline = {
     \ },
     \}
 
-Plug 'ap/vim-buftabline'
+" !Plug 'ap/vim-buftabline'
 
 " Easymotion
 Plug 'easymotion/vim-easymotion'
@@ -149,7 +144,31 @@ Plug 'tpope/vim-fugitive'
 
 " Rainbow Parenthesis
 Plug 'luochen1990/rainbow'
-let g:rainbow_active = 1 "set to 0 if you want to enable it later via :RainbowToggle
+let g:rainbow_active = 1 
+
+	let g:rainbow_conf = {
+	\	'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
+	\	'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
+	\	'operators': '_,_',
+	\	'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
+	\	'separately': {
+	\		'*': {},
+	\		'tex': {
+	\			'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/'],
+	\		},
+	\		'lisp': {
+	\			'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick', 'darkorchid3'],
+	\		},
+	\		'vim': {
+	\			'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/', 'start=/{/ end=/}/ fold', 'start=/(/ end=/)/ containedin=vimFuncBody', 'start=/\[/ end=/\]/ containedin=vimFuncBody', 'start=/{/ end=/}/ fold containedin=vimFuncBody'],
+	\		},
+	\		'html': {
+	\			'parentheses': ['start=/\v\<((area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)[ >])@!\z([-_:a-zA-Z0-9]+)(\s+[-_:a-zA-Z0-9]+(\=("[^"]*"|'."'".'[^'."'".']*'."'".'|[^ '."'".'"><=`]*))?)*\>/ end=#</\z1># fold'],
+	\		},
+	\		'css': 0,
+	\		'nerdtree': 0,
+	\	}
+	\}
 
 " == MultiTerminal in nvim
 Plug 'akinsho/toggleterm.nvim', {'tag' : '*'}
@@ -162,6 +181,12 @@ autocmd TermEnter term://*toggleterm#*
 " For example: 2<C-t> will open terminal 2
 nnoremap <silent><c-t> <Cmd>exe v:count1 . toggleterm_cmd<CR>
 inoremap <silent><c-t> <Esc><Cmd>exe v:count1 . toggleterm_cmd<CR>
+
+" gitsign
+Plug 'lewis6991/gitsigns.nvim'
+
+" tabline
+Plug 'romgrk/barbar.nvim'
 
 " trouble.nvim
 Plug 'folke/trouble.nvim'
@@ -371,9 +396,9 @@ hi! link BufTabLineFill Comment
 nnoremap <leader>a :bprev<CR>
 nnoremap <leader>d :bnext<CR>
 nnoremap <leader>r :b#<CR>
-nnoremap <leader>w :bd<CR>
 " Remap some window operations
 "Navigation between windows
+nnoremap <leader>w :wincmd q<CR>
 nmap <leader>h :wincmd h<CR>
 nmap <leader>l :wincmd l<CR>
 nmap <leader>j :wincmd j<CR>
@@ -400,6 +425,9 @@ lua require("nvim-surround").setup()
 lua require("transparent").setup()
 lua require("marks").setup()
 lua require("mason").setup()
+lua require ("ibl").setup(require('indent-rainbowline').make_opts({}))
+lua require("gitsigns").setup()
+lua require("barbar").setup()
 
 lua <<EOF
   local lspconfig = require("lspconfig")
@@ -416,18 +444,18 @@ lua <<EOF
     })
   end
 
-  lspconfig.html.setup({
+  lspconfig.html.setup {
       on_attach = on_attach,
       capabilities = capabilities,
       filetypes = { "html", "templ", "pug" },
-  })
+  }
 
-  lspconfig.tailwindcss.setup({
+  lspconfig.tailwindcss.setup {
       on_attach = on_attach,
       capabilities = capabilities,
       filetypes = { "templ", "astro", "javascript", "typescript", "react" },
       init_options = { userLanguages = { templ = "html" } },
-  })
+  }
 EOF
 
 lua <<EOF
@@ -441,12 +469,12 @@ lua <<EOF
           },
           follow_current_file = {
             enabled = true,
-            leave_dirs_open = true
+            leave_dirs_open = false 
           }
       },
       follow_current_file = {
         enabled = true,
-        leave_dirs_open = true
+        leave_dirs_open = false 
       },
       buffer = {
         follow_current_file = {
@@ -454,7 +482,7 @@ lua <<EOF
         },
       },
       window = {
-        width = 30
+        width = 40
       }
     }
 
