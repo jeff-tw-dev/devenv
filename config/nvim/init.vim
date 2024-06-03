@@ -396,8 +396,10 @@ hi! link BufTabLineFill Comment
 nnoremap <leader>a :bprev<CR>
 nnoremap <leader>d :bnext<CR>
 nnoremap <leader>r :b#<CR>
+nnoremap <leader>ee :bd!<CR>
 " Remap some window operations
 "Navigation between windows
+
 nnoremap <leader>w :wincmd q<CR>
 nmap <leader>h :wincmd h<CR>
 nmap <leader>l :wincmd l<CR>
