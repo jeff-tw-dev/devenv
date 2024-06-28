@@ -18,6 +18,8 @@ call plug#begin('~/.config/nvim/plugged')
 " ---------------------------------------------------------------------------------------------------------------------
 " Autocomplete
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+call deoplete#custom#option('omni_patterns', { 'go': '[^. *\t]\.\w*' })
+
 " Automatically closing pair stuff
 Plug 'cohama/lexima.vim'
 " Commenting support (gc)
@@ -54,17 +56,6 @@ Plug 'pangloss/vim-javascript'
 Plug 'sheerun/vim-json'
 " Typescript
 Plug 'leafgarland/typescript-vim'
-
-" ---------------------------------------------------------------------------------------------------------------------
-" HTML/CSS
-" ---------------------------------------------------------------------------------------------------------------------
-
-" HTML5 syntax
-Plug 'othree/html5.vim'
-" SCSS syntax
-Plug 'cakebaker/scss-syntax.vim'
-" Color highlighter
-Plug 'lilydjwg/colorizer', { 'for': ['css', 'sass', 'scss', 'less', 'html', 'xdefaults', 'javascript', 'javascript.jsx'] }
 " Emmet
 Plug 'mattn/emmet-vim'
 let g:user_emmet_leader_key='<C-z>'
@@ -84,6 +75,10 @@ Plug 'honza/dockerfile.vim'
 " Go
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 let g:go_def_mapping_enabled = 0
+" let g:go_fmt_command = "gofmt"
+" let g:go_fmt_autosave = 0
+" let g:got_import_autosave = 0
+
 " Rust
 Plug 'rust-lang/rust.vim'
 " Elixir
@@ -128,6 +123,7 @@ let g:lightline = {
 
 " Easymotion
 Plug 'easymotion/vim-easymotion'
+
 " File Search
 Plug 'kien/ctrlp.vim'
 
@@ -202,17 +198,17 @@ nnoremap gR <cmd>TroubleToggle lsp_references<cr>
 Plug 'kylechui/nvim-surround'
 Plug 'xiyaowong/transparent.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvimdev/lspsaga.nvim'
 
-" lspsaga
-" Plug 'nvimdev/lspsaga.nvim'
+" LSP
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.8' }
 
 " Colorschemes
 " Base16
 Plug 'chriskempson/base16-vim'
 
 " Colorscheme
-" Plug 'cocopon/iceberg'
-Plug 'namrabtw/rusty.nvim', { 'branch': 'main' }
 Plug 'ghifarit53/tokyonight-vim' 
 Plug 'shatur/neovim-ayu'
 Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
@@ -347,10 +343,10 @@ let g:ctrlp_show_hidden=1
 " Color scheme
 let g:tokyonight_style = 'night' " available: night, storm let g:tokyonight_enable_italic = 1
 
-" lua require("ayu").colorscheme()
-" colorscheme tokyonight
-"catppuccin catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
-colorscheme ayu 
+" catppuccin catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
+" tokyonight 
+" gruvbox'
+colorscheme gruvbox
 " colorscheme catppuccin-macchiato
 
 " Syntax highlighting
@@ -371,6 +367,7 @@ function! s:select_current_word()
   endif
   return "*\<Plug>(coc-cursors-word):nohlsearch\<CR>"
 endfunc
+
 " Display type on hover
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
@@ -382,8 +379,12 @@ endfunction
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 " Autosave
-" BUG: After edit file in the neo-tree window, this cmd will be trigger but cause error (can't write)
-autocmd InsertLeave * :w!
+" Create an autocommand group to avoid duplication and errors
+augroup AutosaveGroup
+  autocmd!
+  " Check if the buffer is modifiable and then write
+  autocmd InsertLeave * if &modifiable | silent! write | endif
+augroup END
 
 " Remove underline in folded lines
 hi! Folded term=NONE cterm=NONE gui=NONE ctermbg=NONE
@@ -393,13 +394,14 @@ hi! link BufTabLineCurrent Identifier
 hi! link BufTabLineActive Comment
 hi! link BufTabLineHidden Comment
 hi! link BufTabLineFill Comment
+
+" Remap some window and buffer operations
 nnoremap <leader>a :bprev<CR>
 nnoremap <leader>d :bnext<CR>
 nnoremap <leader>r :b#<CR>
 nnoremap <leader>ee :bd!<CR>
-" Remap some window operations
-"Navigation between windows
 
+" Navigation between windows
 nnoremap <leader>w :wincmd q<CR>
 nmap <leader>h :wincmd h<CR>
 nmap <leader>l :wincmd l<CR>
@@ -420,6 +422,10 @@ nnoremap <leader>ev :vsplit ~/.config/nvim/init.vim<CR>
 nnoremap <leader>sv :source ~/.config/nvim/init.vim<CR>
 au BufNewFile,BufRead Jenkinsfile setf groovy
 
+nnoremap <leader>ca :Lspsaga code_action<CR>
+nnoremap <leader>rn :Lspsaga rename<CR>
+nnoremap <leader>o :Lspsaga outline<CR>
+
 " Lua plugins setup
 lua require("toggleterm").setup()
 lua require("trouble").setup()
@@ -427,40 +433,103 @@ lua require("nvim-surround").setup()
 lua require("transparent").setup()
 lua require("marks").setup()
 lua require("mason").setup()
-lua require ("ibl").setup(require('indent-rainbowline').make_opts({}))
+  " require('indent-rainbowline').make_opts({})
 lua require("gitsigns").setup()
 lua require("barbar").setup()
 
 lua <<EOF
-  local lspconfig = require("lspconfig")
-  vim.filetype.add({ extension = { templ = "templ" } })
 
-  -- Use a loop to conveniently call 'setup' on multiple servers and
-  -- map buffer local keybindings when the language server attaches
+    ----------------------
+    -- Telescope keymap --
+    ----------------------
+    local builtin = require('telescope.builtin')
+    vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
+    vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+    vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
+    vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
 
-  local servers = { 'rust_analyzer', 'gopls', 'ccls', 'cmake', 'tsserver', 'templ' }
-  for _, lsp in ipairs(servers) do
-    lspconfig[lsp].setup({
-      on_attach = on_attach,
-      capabilities = capabilities,
-    })
-  end
+    ------------------------------------------------
+    -- TODO: Prevent error message after easymotion jump --
+    ------------------------------------------------
+    function ToggleDiagnostics(enable)
+      if enable then
+	vim.diagnostic.enable()
+      else
+	vim.diagnostic.disable()
+      end
+    end
 
-  lspconfig.html.setup {
-      on_attach = on_attach,
-      capabilities = capabilities,
-      filetypes = { "html", "templ", "pug" },
-  }
+    ---------------------------------
+    -- Setup indentation indicator --
+    ---------------------------------
+    local highlight = {
+	"RainbowRed",
+	"RainbowYellow",
+	"RainbowBlue",
+	"RainbowOrange",
+	"RainbowGreen",
+	"RainbowViolet",
+	"RainbowCyan",
+    }
+    local hooks = require "ibl.hooks"
+    -- create the highlight groups in the highlight setup hook, so they are reset
+    -- every time the colorscheme changes
+    hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+	vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
+	vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
+	vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
+	vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
+	vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
+	vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
+	vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
+    end)
 
-  lspconfig.tailwindcss.setup {
-      on_attach = on_attach,
-      capabilities = capabilities,
-      filetypes = { "templ", "astro", "javascript", "typescript", "react" },
-      init_options = { userLanguages = { templ = "html" } },
-  }
-EOF
+    require ("ibl").setup {
+      scope = { highlight = highlight },
+    }
+    vim.g.rainbow_delimiters = { highlight = highlight }
+    hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
+    -----------------------------------
 
-lua <<EOF
+    -----------------
+    -- LSP settings --
+    -----------------
+    require ("lspsaga").setup {
+      ui = {
+	code_action = ''
+      }  
+    }
+
+    local lspconfig = require("lspconfig")
+    vim.filetype.add({ extension = { templ = "templ" } })
+
+    -- Use a loop to conveniently call 'setup' on multiple servers and
+    -- map buffer local keybindings when the language server attaches
+
+    local servers = { 'rust_analyzer', 'gopls', 'ccls', 'cmake', 'tsserver', 'templ' }
+    for _, lsp in ipairs(servers) do
+      lspconfig[lsp].setup({
+	on_attach = on_attach,
+	capabilities = capabilities,
+      })
+    end
+
+    lspconfig.html.setup {
+	on_attach = on_attach,
+	capabilities = capabilities,
+	filetypes = { "html", "templ", "pug", "typescriptreact" },
+    }
+
+    lspconfig.tailwindcss.setup {
+	on_attach = on_attach,
+	capabilities = capabilities,
+	filetypes = { "templ", "astro", "javascript", "typescript", "react", "typescriptreact" },
+	init_options = { userLanguages = { templ = "html" } },
+    }
+
+    -------------------
+    -- Setup neo-tree --
+    -------------------
     require ('neo-tree').setup {
       close_if_last_window = false,
       filesystem = {
@@ -497,52 +566,53 @@ lua <<EOF
       {text = " ", texthl = "DiagnosticSignInfo"})
     vim.fn.sign_define("DiagnosticSignHint",
       {text = "󰌵", texthl = "DiagnosticSignHint"})
-EOF
 
-lua <<EOF
-require ('nvim-treesitter.configs').setup {
-  highlight = { enable = true },
-  indent = { enable = true },
-  ensure_installed = {
-      'c',
-      'cpp',
-      'c_sharp',
-      'rust',
-      'go',
-      'gomod',
-      'proto',
-      'templ',
-      'python',
-      'swift',
-      'java',
-      'jsdoc',
-      'typescript',
-      'javascript',
-      'tsx',
-      'css',
-      'scss',
-      'html',
-      'pug',
-      'astro',
-      'vue',
-      'svelte',
-      'graphql',
-      'prisma',
-      'elixir',
-      'heex',
-      'eex',
-      'yaml',
-      'toml',
-      'json',
-      'xml',
-      'markdown',
-      'terraform',
-      'dockerfile',
-      'sql',
-      'ini',
-      'ssh_config',
-      'make',
-      'cmake'
-  }
-}
+    -------------------
+    -- Treesitter --
+    -------------------
+    require ('nvim-treesitter.configs').setup {
+      highlight = { enable = true },
+      indent = { enable = true },
+      ensure_installed = {
+	  'c',
+	  'cpp',
+	  'c_sharp',
+	  'rust',
+	  'go',
+	  'gomod',
+	  'proto',
+	  'templ',
+	  'python',
+	  'swift',
+	  'java',
+	  'jsdoc',
+	  'typescript',
+	  'javascript',
+	  'tsx',
+	  'css',
+	  'scss',
+	  'html',
+	  'pug',
+	  'astro',
+	  'vue',
+	  'svelte',
+	  'graphql',
+	  'prisma',
+	  'elixir',
+	  'heex',
+	  'eex',
+	  'yaml',
+	  'toml',
+	  'json',
+	  'xml',
+	  'markdown',
+	  'terraform',
+	  'dockerfile',
+	  'sql',
+	  'ini',
+	  'ssh_config',
+	  'make',
+	  'cmake'
+      }
+    }
 EOF

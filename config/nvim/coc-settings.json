@@ -10,7 +10,12 @@
 	  },
 	  "tsserver": {
 	    "enable": true,
-	    "filetypes": ["typescript", "tsx", "javascript"],
-	  }
+	    "filetypes": ["typescript", "tsx", "javascript", "typescriptreact"],
+	  },
+	  "golang": {
+	      "command": "gopls",
+	      "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
+	      "filetypes": ["go"]
+	    }
 	}
 }
