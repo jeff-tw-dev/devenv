@@ -8,10 +8,15 @@
 	    "command": "~/.config/nvim/elixir-ls/release/language_server.sh",
 	    "filetypes": ["elixir", "eelixir"]
 	  },
-	  "tsserver": {
-	    "enable": true,
-	    "filetypes": ["typescript", "tsx", "javascript", "typescriptreact"],
-	  },
+	"tsserver": {
+		"command": "typescript-language-server",
+		"args": ["--stdio"],
+		"filetypes": ["javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx"],
+		"rootPatterns": ["package.json"],
+		"initializationOptions": {
+			"host": "neovim"
+		}
+	},
 	  "golang": {
 	      "command": "gopls",
 	      "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],

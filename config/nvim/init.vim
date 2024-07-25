@@ -18,7 +18,7 @@ call plug#begin('~/.config/nvim/plugged')
 " ---------------------------------------------------------------------------------------------------------------------
 " Autocomplete
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-call deoplete#custom#option('omni_patterns', { 'go': '[^. *\t]\.\w*' })
+" call deoplete#custom#option('omni_patterns', { 'go': '[^. *\t]\.\w*' })
 
 " Automatically closing pair stuff
 Plug 'cohama/lexima.vim'
