@@ -29,22 +29,23 @@ Plug 'tpope/vim-sleuth'
 " Language Server
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " CoC extensions
-let g:coc_global_extensions = ['coc-tsserver']
-" Remap keys for applying codeAction to the current line.
-nmap <leader>ac  <Plug>(coc-codeaction)
-" Apply AutoFix to problem on the current line.
-nmap <leader>cf  <Plug>(coc-fix-current)
-" GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+" let g:coc_global_extensions = ['coc-tsserver']
+" " Remap keys for applying codeAction to the current line.
+" nmap <leader>ac  <Plug>(coc-codeaction)
+" " Apply AutoFix to problem on the current line.
+" nmap <leader>cf  <Plug>(coc-fix-current)
+" " GoTo code navigation.
+" nmap <silent> gd <Plug>(coc-definition)
+" nmap <silent> gy <Plug>(coc-type-definition)
+" nmap <silent> gi <Plug>(coc-implementation)
+" nmap <silent> gr <Plug>(coc-references)
+" inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
 
 Plug 'williamboman/mason.nvim'
 Plug 'neovim/nvim-lspconfig'
 
 Plug 'github/copilot.vim'
+Plug 'jackMort/ChatGPT.nvim'
 
 " ---------------------------------------------------------------------------------------------------------------------
 " JS (ES6, React)
@@ -88,10 +89,9 @@ Plug 'elixir-editors/vim-elixir'
 " Interface improving
 " ---------------------------------------------------------------------------------------------------------------------
 
-" Nerdtree file browser
-" Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeFind', 'NERDTreeToggle'] }
-" Nerdtree git status
-" Plug 'Xuyuanp/nerdtree-git-plugin'
+" Close buffer without messing up the window layout
+Plug 'famiu/bufdelete.nvim'
+
 " File icon
 " Plug 'ryanoasis/vim-devicons'
 "
@@ -185,8 +185,8 @@ Plug 'lewis6991/gitsigns.nvim'
 Plug 'romgrk/barbar.nvim'
 
 " trouble.nvim
-Plug 'folke/trouble.nvim'
-nnoremap <leader>xx <cmd>TroubleToggle<cr>
+Plug 'folke/trouble.nvim', { 'tag': 'v2.10.0' }
+
 nnoremap <leader>xw <cmd>TroubleToggle workspace_diagnostics<cr>
 nnoremap <leader>xd <cmd>TroubleToggle document_diagnostics<cr>
 nnoremap <leader>xq <cmd>TroubleToggle quickfix<cr>
@@ -198,6 +198,7 @@ nnoremap gR <cmd>TroubleToggle lsp_references<cr>
 Plug 'kylechui/nvim-surround'
 Plug 'xiyaowong/transparent.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 Plug 'nvimdev/lspsaga.nvim'
 
 " LSP
@@ -369,14 +370,14 @@ function! s:select_current_word()
 endfunc
 
 " Display type on hover
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  end
-endfunction
-nnoremap <silent> K :call <SID>show_documentation()<CR>
+" function! s:show_documentation()
+"   if (index(['vim','help'], &filetype) >= 0)
+"     execute 'h '.expand('<cword>')
+"   else
+"     call CocAction('doHover')
+"   end
+" endfunction
+" nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 " Autosave
 " Create an autocommand group to avoid duplication and errors
@@ -395,11 +396,24 @@ hi! link BufTabLineActive Comment
 hi! link BufTabLineHidden Comment
 hi! link BufTabLineFill Comment
 
+" ==========================
+" ==== Key mappings <k> ====
+" ==========================
+
+" Coc Command
+" nnoremap <leader>o :CocOutline<CR>
+" nnoremap <leader>ci :CocCommand document.showIncomingCalls<CR>
+" nnoremap <leader>co :CocCommand document.showOutgoingCalls<CR>
+nnoremap <leader>rn <Plug>(coc-rename)
+nnoremap <leader>rf :CocCommand workspace.renameCurrentFile<CR>
+nnoremap <leader>oi :CocCommand editor.action.organizeImport<CR>
+
+
 " Remap some window and buffer operations
-nnoremap <leader>a :bprev<CR>
-nnoremap <leader>d :bnext<CR>
+nnoremap <leader>a :bp<CR>
+nnoremap <leader>d :bn<CR>
 nnoremap <leader>r :b#<CR>
-nnoremap <leader>ee :bd!<CR>
+"nnoremap <leader>ee :bd<CR>
 
 " Navigation between windows
 nnoremap <leader>w :wincmd q<CR>
@@ -423,23 +437,33 @@ nnoremap <leader>sv :source ~/.config/nvim/init.vim<CR>
 au BufNewFile,BufRead Jenkinsfile setf groovy
 
 nnoremap <leader>ca :Lspsaga code_action<CR>
-nnoremap <leader>rn :Lspsaga rename<CR>
 nnoremap <leader>o :Lspsaga outline<CR>
+nnoremap <leader>ci :Lspsaga incoming_calls<CR>
+nnoremap <leader>co :Lspsaga outgoing_calls<CR>
+nnoremap <silent> F :Lspsaga finder<CR>
+nmap <silent> gd :Lspsaga goto_definition<CR>
+nmap <silent> gy :Lspsaga goto_type_definition<CR>
+nmap <silent> gi :Lspsaga goto_implementation<CR>
+nmap <silent> gr :Lspsaga finder ref<CR>
+nnoremap <silent> K :Lspsaga hover_doc<CR>
 
 " Lua plugins setup
 lua require("toggleterm").setup()
-lua require("trouble").setup()
 lua require("nvim-surround").setup()
 lua require("transparent").setup()
+lua require("trouble").setup()
 lua require("marks").setup()
 lua require("mason").setup()
-  " require('indent-rainbowline').make_opts({})
+" require('indent-rainbowline').make_opts({})
 lua require("gitsigns").setup()
 lua require("barbar").setup()
 
 lua <<EOF
 
-    ----------------------
+    local bd = require('bufdelete')
+    vim.keymap.set('n', '<leader>ee', bd.bufdelete, {})
+
+   ----------------------
     -- Telescope keymap --
     ----------------------
     local builtin = require('telescope.builtin')
@@ -491,40 +515,44 @@ lua <<EOF
     hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
     -----------------------------------
 
-    -----------------
-    -- LSP settings --
-    -----------------
+    ---------------------------------
+    -- Neovim native Lspconfig settings --
+    ---------------------------------
     require ("lspsaga").setup {
       ui = {
-	code_action = ''
-      }  
+	code_action = '',
+      },
+      folder_level = 2
     }
 
     local lspconfig = require("lspconfig")
-    vim.filetype.add({ extension = { templ = "templ" } })
+    vim.filetype.add({ extension = { templ = "templ", pug = "pug" } })
 
     -- Use a loop to conveniently call 'setup' on multiple servers and
     -- map buffer local keybindings when the language server attaches
 
-    local servers = { 'rust_analyzer', 'gopls', 'ccls', 'cmake', 'tsserver', 'templ' }
+    local servers = { 'rust_analyzer', 'gopls', 'cmake', 'tsserver', 'templ', 'clangd', 'pyright' }
     for _, lsp in ipairs(servers) do
       lspconfig[lsp].setup({
 	on_attach = on_attach,
-	capabilities = capabilities,
       })
     end
 
+    lspconfig.terraformls.setup {
+	on_attach = on_attach,
+	filetypes = { "terraform", "terraform-vars" },
+	init_options = { userLanguages = { tf = "terraform", tfvars = "terraform-vars" } },
+    }
+
     lspconfig.html.setup {
 	on_attach = on_attach,
-	capabilities = capabilities,
 	filetypes = { "html", "templ", "pug", "typescriptreact" },
     }
 
     lspconfig.tailwindcss.setup {
 	on_attach = on_attach,
-	capabilities = capabilities,
-	filetypes = { "templ", "astro", "javascript", "typescript", "react", "typescriptreact" },
-	init_options = { userLanguages = { templ = "html" } },
+	filetypes = { "svelte", "templ", "astro", "javascript", "typescript", "react", "typescriptreact", "html", "pug" },
+	init_options = { userLanguages = { svelte = "html", templ = "html", pug = "html" } },
     }
 
     -------------------
@@ -571,6 +599,48 @@ lua <<EOF
     -- Treesitter --
     -------------------
     require ('nvim-treesitter.configs').setup {
+      textobjects = {
+	select = {
+	  enable = true,
+
+	  -- Automatically jump forward to textobj, similar to targets.vim
+	  lookahead = true,
+
+	  keymaps = {
+	    -- You can use the capture groups defined in textobjects.scm
+	    ["af"] = "@function.outer",
+	    ["if"] = "@function.inner",
+	    ["ac"] = "@class.outer",
+	    -- You can optionally set descriptions to the mappings (used in the desc parameter of
+	    -- nvim_buf_set_keymap) which plugins like which-key display
+	    ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+	    -- You can also use captures from other query groups like `locals.scm`
+	    ["as"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
+	  },
+	  -- You can choose the select mode (default is charwise 'v')
+	  --
+	  -- Can also be a function which gets passed a table with the keys
+	  -- * query_string: eg '@function.inner'
+	  -- * method: eg 'v' or 'o'
+	  -- and should return the mode ('v', 'V', or '<c-v>') or a table
+	  -- mapping query_strings to modes.
+	  selection_modes = {
+	    ['@parameter.outer'] = 'v', -- charwise
+	    ['@function.outer'] = 'V', -- linewise
+	    ['@class.outer'] = '<c-v>', -- blockwise
+	  },
+	  -- If you set this to `true` (default is `false`) then any textobject is
+	  -- extended to include preceding or succeeding whitespace. Succeeding
+	  -- whitespace has priority in order to act similarly to eg the built-in
+	  -- `ap`.
+	  --
+	  -- Can also be a function which gets passed a table with the keys
+	  -- * query_string: eg '@function.inner'
+	  -- * selection_mode: eg 'v'
+	  -- and should return true or false
+	  include_surrounding_whitespace = true,
+	},
+      },
       highlight = { enable = true },
       indent = { enable = true },
       ensure_installed = {
@@ -612,7 +682,10 @@ lua <<EOF
 	  'ini',
 	  'ssh_config',
 	  'make',
-	  'cmake'
+	  'cmake',
       }
     }
 EOF
+
+autocmd BufWritePre *.tfvars lua vim.lsp.buf.format()
+autocmd BufWritePre *.tf lua vim.lsp.buf.format()

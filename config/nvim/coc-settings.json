@@ -3,24 +3,27 @@
 	"diagnostic.virtualText": true,
 	"diagnostic.virtualTextCurrentLineOnly": true,
 	"codeLens.enable": true,
+	"typescript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": true,
+	"typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true,
+	"typescript.format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": true,
+	"typescript.format.semicolons": "insert",
+	"typescript.format.placeOpenBraceOnNewLineForFunctions": true,
 	"languageserver": {
-	  "elixirLS": {
-	    "command": "~/.config/nvim/elixir-ls/release/language_server.sh",
-	    "filetypes": ["elixir", "eelixir"]
-	  },
-	"tsserver": {
-		"command": "typescript-language-server",
-		"args": ["--stdio"],
-		"filetypes": ["javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx"],
-		"rootPatterns": ["package.json"],
-		"initializationOptions": {
-			"host": "neovim"
+		"elixirLS": {
+			"command": "~/.config/nvim/elixir-ls/release/language_server.sh",
+			"filetypes": ["elixir", "eelixir"]
+		},
+		"golang": {
+			"command": "gopls",
+			"rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
+			"filetypes": ["go"]
+		},
+		"terraform": {
+		      "command": "terraform-ls",
+		      "args": ["serve"],
+		      "filetypes": ["terraform", "terraform-vars"],
+		      "initializationOptions": {},
+		      "settings": {}
 		}
-	},
-	  "golang": {
-	      "command": "gopls",
-	      "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
-	      "filetypes": ["go"]
-	    }
 	}
 }
