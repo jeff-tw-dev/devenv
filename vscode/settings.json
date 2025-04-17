@@ -10,11 +10,12 @@
             ]
         }
     ],
+    "vim.leader": "/",
+    "vim.useSystemClipboard": true,
     "vim.easymotion": true,
-    "vim.leader": "-",
     "editor.fontFamily": "Monaco, Menlo, 'Courier New', monospace",
     "editor.fontWeight": "400",
-    "editor.fontSize": 13,
+    "editor.fontSize": 14,
     "diffEditor.ignoreTrimWhitespace": false,
     "workbench.iconTheme": "vscode-icons",
     "eslint.format.enable": true,
