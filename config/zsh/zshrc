@@ -118,4 +118,8 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH="$PATH:/Users/jeffhsu/flutter/bin"
 export OPENAI_API_KEY=$(/bin/cat ~/key/opai)
 
+# aws/pulumi
+export AWS_REGION='us-east-1'
+export AWS_PROFILE='graidtech'
+
 [[ -s "/Users/jeffhsu/.gvm/scripts/gvm" ]] && source "/Users/jeffhsu/.gvm/scripts/gvm"
