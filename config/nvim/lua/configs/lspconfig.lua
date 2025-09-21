@@ -1,6 +1,5 @@
-require("nvchad.configs.lspconfig").defaults()
--- local on_attach = require("nvchad.configs.lspconfig").on_attach
--- local capabilities = require("nvchad.configs.lspconfig").capabilities
+local on_attach = require("nvchad.configs.lspconfig").on_attach
+local capabilities = require("nvchad.configs.lspconfig").capabilities
 
 local servers = {
   "gopls",
@@ -12,7 +11,7 @@ local servers = {
   "astro",
   "svelte",
   "cmake",
-  "elixir_ls",
+  "elixirls",
   "jsonls",
   "yamlls",
   "clangd",
@@ -25,22 +24,33 @@ local servers = {
   "systemd_ls",
   "biome",
 }
-vim.lsp.enable(servers)
 
-vim.lsp.config(
-  "jsonls",
-  {
-    settings = {
-      json = {
-        schemas = require("schemastore").json.schemas(),
-        validate = { enable = true },
-      },
-    }
+local server_configs = {
+  jsonls = {
+    json = {
+      schemas = require("schemastore").json.schemas(),
+      validate = { enable = true },
+    },
   }
-)
+}
 
--- Other configs...
--- lspconfig.tsserver.setup { ... }
--- lspconfig.pyright.setup { ... }
+-- Update configs
+local lspconfig = vim.lsp.config
+lspconfig("*", {
+  root_markers = { ".git" },
+})
 
--- read :h vim.lsp.config for changing options of lsp servers 
+for _, server_name in ipairs(servers) do
+  local server_opts = {
+    on_attach = on_attach,
+    capabilities = capabilities,
+
+    -- language server settings
+    settings = server_configs[server_name]
+  }
+
+  lspconfig(server_name, server_opts)
+end
+
+-- Enable configs 
+vim.lsp.enable(servers)

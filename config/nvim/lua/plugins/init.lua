@@ -18,23 +18,8 @@ return {
     "b0o/schemastore.nvim",
   },
 
+  { import = "plugins/treesitter" },
   -- test new blink
   -- { import = "nvchad.blink.lazyspec" },
 
-  {
-    "nvim-treesitter/nvim-treesitter",
-    opts = {
-      ensure_installed = {
-        "vim",
-        "lua",
-        "vimdoc",
-        "html",
-        "css",
-        "svelte",
-        "gopls",
-        "rust_analyzer",
-        "ts_ls",
-      },
-    },
-  },
 }
