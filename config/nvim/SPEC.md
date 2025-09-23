@@ -6,12 +6,15 @@
 - [x] use jj for exiting insert mode
 - [x] tab buffer
 - [ ] LSP
+    - [ ] performance issue
     - [ ] workspace diagnostics/linting
     - [ ] refactoring
     - [x] json schema description
     - [ ] json schema intelligense
     - [x] type description(<S-k>)
     - [x] jumping to definition/declaration/references
+    - [ ] outline
+    - [ ] html/jsx tag auto-close/sync (emmet?)
 - [x] File tree 
     - [x] file/folder add/remove/edit
     - [x] search

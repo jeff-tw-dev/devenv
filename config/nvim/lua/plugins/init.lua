@@ -21,5 +21,19 @@ return {
   { import = "plugins/treesitter" },
   -- test new blink
   -- { import = "nvchad.blink.lazyspec" },
+  {
+    "artemave/workspace-diagnostics.nvim"
+  },
 
+  {
+    "kelly-lin/telescope-ag",
+    dependencies = { "nvim-telescope/telescope.nvim" },
+  },
+
+  {
+    "hedyhli/outline.nvim",
+    -- config = function()
+    --   require("outline").setup {}
+    -- end,
+  },
 }

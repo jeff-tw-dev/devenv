@@ -18,7 +18,7 @@ local servers = {
   "bashls",
   "docker_language_server",
   "graphql",
-  "luals",
+  -- "lua_ls",
   "pyright",
   "tailwindcss",
   "systemd_ls",
