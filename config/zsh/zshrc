@@ -5,8 +5,7 @@
 export ZSH_DISABLE_COMPFIX="true"
 
 # =====================================================================================================================
-# Instant powerlevel10k prompt
-# =====================================================================================================================
+# Instant powerlevel10k prompt =====================================================================================================================
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
@@ -123,3 +122,6 @@ export AWS_REGION='us-east-1'
 export AWS_PROFILE='graidtech'
 
 [[ -s "/Users/jeffhsu/.gvm/scripts/gvm" ]] && source "/Users/jeffhsu/.gvm/scripts/gvm"
+
+# Added by Antigravity
+export PATH="/Users/jeffhsu/.antigravity/antigravity/bin:$PATH"
