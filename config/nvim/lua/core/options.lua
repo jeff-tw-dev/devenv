@@ -13,3 +13,4 @@ vim.opt.updatetime = 50
 vim.opt.undofile = true
 vim.opt.undodir = vim.fn.stdpath("data") .. "/undodir"
 vim.opt.clipboard = "unnamedplus"
+vim.opt.signcolumn = "yes"

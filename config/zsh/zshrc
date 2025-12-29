@@ -101,8 +101,8 @@ alias ogc='openapi-generator-cli'
 alias j='cd $(ghq list -p | fzf -1 -e)'
 
 # pnpm
-export PNPM_HOME="/Users/jeffhsu/Library/pnpm"
-export PATH="$PNPM_HOME:$PATH"
+# export PNPM_HOME="/Users/jeffhsu/Library/pnpm"
+# export PATH="$PNPM_HOME:$PATH"
 # pnpm end
 
 export GHQ_ROOT="$HOME/Code"

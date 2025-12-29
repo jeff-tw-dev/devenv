@@ -1,5 +1,14 @@
 local keymap = vim.keymap
 
+-- lsp
+keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", { desc = "Go to definition" })
+keymap.set("n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", { desc = "Go to type definition" })
+keymap.set("n", "<leader>r", "<cmd>Telescope lsp_references<CR>", { desc = "Go to references" })
+keymap.set("n", "<leader>i", "<cmd>Telescope lsp_implementations<CR>", { desc = "Go to implementation" })
+keymap.set("n", "<leader>ci", "<cmd>Telescope lsp_incoming_calls<CR>", { desc = "List incoming calls" })
+keymap.set("n", "<leader>co", "<cmd>Telescope lsp_outgoing_calls<CR>", { desc = "List outgoing calls" })
+keymap.set("n", "<S-k>", "<cmd>vim.lsp.buf.hover()<CR>", { desc = "Peek type/doc of code under cursor" })
+
 -- exit insert mode
 keymap.set("i", "jj", "<ESC>", { desc = "Exit insert mode" })
 
