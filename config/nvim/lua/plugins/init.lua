@@ -112,4 +112,19 @@ return {
 
   -- toggleterm
   require("plugins.toggleterm"),
+
+  -- treesitter
+  require("plugins.treesitter"),
+
+  -- neotest
+  require("plugins.neotest"),
+
+  -- lang extras
+  require("plugins.lang_extras"),
+
+  -- rust
+  require("plugins.rust"),
+
+  -- go
+  require("plugins.go"),
 }

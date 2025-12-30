@@ -16,13 +16,25 @@ return {
       end
 
       require("mason-lspconfig").setup({
-        ensure_installed = { "lua_ls", "rust_analyzer", "gopls", "tsserver", "clangd" },
+        ensure_installed = { 
+          "lua_ls",
+          "rust_analyzer",
+          "gopls",
+          "tsserver",
+          "clangd",
+          "tailwindcss",
+          "svelte",
+          "elixirls",
+          "pyright"
+        },
         handlers = {
           function(server_name)
-            lspconfig[server_name].setup({
-              on_attach = on_attach,
-              capabilities = capabilities,
-            })
+            if server_name ~= "rust_analyzer" then
+              lspconfig[server_name].setup({
+                on_attach = on_attach,
+                capabilities = capabilities,
+              })
+            end
           end,
         },
       })

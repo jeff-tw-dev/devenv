@@ -7,7 +7,7 @@ keymap.set("n", "<leader>r", "<cmd>Telescope lsp_references<CR>", { desc = "Go t
 keymap.set("n", "<leader>i", "<cmd>Telescope lsp_implementations<CR>", { desc = "Go to implementation" })
 keymap.set("n", "<leader>ci", "<cmd>Telescope lsp_incoming_calls<CR>", { desc = "List incoming calls" })
 keymap.set("n", "<leader>co", "<cmd>Telescope lsp_outgoing_calls<CR>", { desc = "List outgoing calls" })
-keymap.set("n", "<S-k>", "<cmd>vim.lsp.buf.hover()<CR>", { desc = "Peek type/doc of code under cursor" })
+keymap.set("n", "<S-k>", vim.lsp.buf.hover, { desc = "Peek type/doc of code under cursor" })
 
 -- exit insert mode
 keymap.set("i", "jj", "<ESC>", { desc = "Exit insert mode" })
