@@ -12,3 +12,7 @@ My personal Neovim configuration.
 | `cs{target}{replacement}` | **Change** surround | `cs"'` ("word" -> 'word') |
 | **Visual Mode** | | |
 | `S{char}` | **Surround** selection | Select text -> `S)` -> (text) |
+
+## toggleterm
+
+Escape insert mode in terminal: `<C-/> <C-n>`
