@@ -50,21 +50,18 @@ return {
   },
 
   -- nvim-tree
+  require("plugins.nvim-tree"),
+
+  -- autopairs
   {
-    "nvim-tree/nvim-tree.lua",
-    version = "*",
-    lazy = false,
-    dependencies = {
-      "nvim-tree/nvim-web-devicons",
-    },
-    config = function()
-      require("nvim-tree").setup({
-        respect_buf_cwd = true,
-        filters = {
-          git_ignored = false,
-        },
-      })
-    end,
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    opts = {},
+  },
+
+  -- bufdelete
+  {
+    "famiu/bufdelete.nvim",
   },
 
   -- fuzzy finder

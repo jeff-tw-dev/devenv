@@ -27,6 +27,10 @@ return {
       git = {
         enable = true,
       },
+      update_focused_file = {
+        enable = true,
+        update_root = false,
+      },
     })
 
     vim.cmd([[highlight NvimTreeGitStaged guifg=#50FA7B]])
