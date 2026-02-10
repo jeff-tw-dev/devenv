@@ -1,0 +1,27 @@
+---
+
+- name: Check if rustup is installed
+  stat:
+    path: "{{ user.home }}/.cargo/bin/rustup"
+  register: rustup_installed
+
+- name: Install rustup
+  shell: >
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  args:
+    executable: /bin/bash
+  when: not rustup_installed.stat.exists
+
+- name: Install stable toolchain
+  shell: |
+    source {{ user.home }}/.cargo/env
+    rustup toolchain install stable
+  args:
+    executable: /bin/bash
+
+- name: Set stable as default
+  shell: |
+    source {{ user.home }}/.cargo/env
+    rustup default stable
+  args:
+    executable: /bin/bash

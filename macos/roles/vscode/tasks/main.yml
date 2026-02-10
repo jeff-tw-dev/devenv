@@ -1,0 +1,28 @@
+---
+
+- name: Check if VSCode is installed in Applications
+  stat:
+    path: "/Applications/Visual Studio Code.app"
+  register: vscode_app_check
+
+- name: Ensure VSCode User config directory exists
+  file:
+    path: "{{ user.home }}/Library/Application Support/Code/User"
+    state: directory
+  when: vscode_app_check.stat.exists
+
+- name: Symlink VSCode settings.json
+  file:
+    src: "{{ playbook_dir }}/../vscode/settings.json"
+    dest: "{{ user.home }}/Library/Application Support/Code/User/settings.json"
+    state: link
+    force: yes
+  when: vscode_app_check.stat.exists
+
+- name: Symlink VSCode keybindings.json
+  file:
+    src: "{{ playbook_dir }}/../vscode/keybindings.json"
+    dest: "{{ user.home }}/Library/Application Support/Code/User/keybindings.json"
+    state: link
+    force: yes
+  when: vscode_app_check.stat.exists

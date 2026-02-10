@@ -1,0 +1,13 @@
+---
+
+- name: Ensure Fonts directory exists
+  file:
+    path: "{{ user.home }}/Library/Fonts"
+    state: directory
+
+- name: Install custom fonts
+  copy:
+    src: "{{ item }}"
+    dest: "{{ user.home }}/Library/Fonts/{{ item | basename }}"
+  with_fileglob:
+    - "{{ playbook_dir }}/../font/*"

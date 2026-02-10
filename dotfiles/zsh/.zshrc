@@ -5,8 +5,7 @@
 export ZSH_DISABLE_COMPFIX="true"
 
 # =====================================================================================================================
-# Instant powerlevel10k prompt
-# =====================================================================================================================
+# Instant powerlevel10k prompt =====================================================================================================================
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
@@ -29,6 +28,8 @@ eval "$(direnv hook zsh)"
 
 # Set custom PATH
 export PATH=$PATH:$HOME/bin
+export PATH="/opt/homebrew/bin:$PATH"
+export PATH=$PATH:$HOME/.gvm
 
 # =====================================================================================================================
 # Oh my zsh settings
@@ -92,21 +93,43 @@ alias q='exit'
 alias fsize='ncdu --color dark -x --exclude .git --exclude node_modules'
 alias lg='lazygit'
 alias ld='lazydocker'
+alias lp='lazynpm'
 alias zshrc='vim $HOME/.zshrc'
 alias rosetta='arch -x86_64'
 alias py='python3'
+alias ogc='openapi-generator-cli'
 . /opt/homebrew/etc/profile.d/z.sh
+
+alias j='cd $(ghq list -p | fzf -1 -e)'
+export GHQ_ROOT="$HOME/Code"
+
 # pnpm
-export PNPM_HOME="$HOME/Library/pnpm"
-export PATH="$PNPM_HOME:$PATH"
+# export PNPM_HOME="/Users/jeffhsu/Library/pnpm"
+# export PATH="$PNPM_HOME:$PATH"
 # pnpm end
 
 # bun completions
-[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+[ -s "/Users/jeffhsu/.bun/_bun" ] && source "/Users/jeffhsu/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
-export PATH="$PATH:$HOME/flutter/bin"
+export PATH="$PATH:/Users/jeffhsu/flutter/bin"
+# aws/pulumi
+export AWS_REGION='us-east-1'
+export AWS_PROFILE='graidtech'
 
-[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
+[[ -s "/Users/jeffhsu/.gvm/scripts/gvm" ]] && source "/Users/jeffhsu/.gvm/scripts/gvm" && unset -f cd
+if command -v go >/dev/null 2>&1; then
+    export PATH="$PATH:$(go env GOPATH)/bin"
+fi
+
+# Added by Antigravity
+export PATH="/Users/jeffhsu/.antigravity/antigravity/bin:$PATH"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+. "$HOME/.local/bin/env"

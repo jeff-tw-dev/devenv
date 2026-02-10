@@ -1,0 +1,21 @@
+---
+
+- name: Ensure Xcode command line tools are installed
+  command: xcode-select -p
+  register: xcode_check
+  ignore_errors: yes
+  changed_when: false
+
+- name: Install Xcode command line tools
+  command: xcode-select --install
+  when: xcode_check.rc != 0
+  ignore_errors: yes
+
+- name: Verify cmake is installed
+  command: cmake --version
+  register: cmake_version
+  changed_when: false
+
+- name: Display cmake version
+  debug:
+    msg: "{{ cmake_version.stdout }}"

@@ -1,0 +1,21 @@
+---
+
+- name: Check if uv is installed
+  command: which uv
+  register: uv_check
+  ignore_errors: yes
+  changed_when: false
+
+- name: Install uv
+  shell: >
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+  args:
+    executable: /bin/bash
+  when: uv_check.rc != 0
+
+- name: Install Python 3.12
+  shell: |
+    source {{ user.home }}/.local/bin/env
+    uv python install 3.12
+  args:
+    executable: /bin/bash

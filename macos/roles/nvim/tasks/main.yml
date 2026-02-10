@@ -1,11 +1,13 @@
 ---
 
-- name: Create nvim config folder
+- name: Ensure .config directory exists
   file:
-    path: "{{ user.home }}/.config/nvim"
+    path: "{{ user.home }}/.config"
     state: directory
 
-- name: Set init.vim
-  template:
-    src: init.vim.j2
-    dest: "{{ user.home }}/.config/nvim/init.vim"
+- name: Symlink nvim config
+  file:
+    src: "{{ playbook_dir }}/../dotfiles/nvim"
+    dest: "{{ user.home }}/.config/nvim"
+    state: link
+    force: yes

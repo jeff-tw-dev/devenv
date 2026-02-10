@@ -1,17 +1,9 @@
-tap 'homebrew/core'
-tap 'homebrew/bundle'
-tap 'homebrew/cask'
-tap 'buo/cask-upgrade'
-tap 'homebrew/cask-fonts'
 tap 'jesseduffield/lazydocker'
 tap 'jesseduffield/lazygit'
 tap 'norwoodj/tap'
-tap 'mongodb/brew'
 
 # === Misc ===
 brew 'tldr'
-brew 'hugo'
-brew 'mas'
 brew 'ffmpeg'
 
 # === Environment ===
@@ -23,7 +15,7 @@ brew 'htop'
 brew 'ansible'
 brew 'coreutils'
 brew 'direnv'
-brew 'rbenv'
+brew 'tree'
 
 # === Network ===
 brew 'curl'
@@ -34,6 +26,8 @@ brew 'wget'
 brew 'terraform'
 brew 'kubectx'
 brew 'lazydocker'
+brew 'awscli'
+brew 'cloudflared'
 
 # === File System ===
 brew 'z'
@@ -51,30 +45,19 @@ brew 'git-lfs'
 brew 'lazygit'
 brew 'pre-commit'
 brew 'ghq'
-# brew 'commitizen'
+brew 'commitizen'
 
 # === Encryption ===
 brew 'gnupg'
 brew 'mkcert'
 brew 'pass'
 brew 'md5sha1sum'
-brew 'sops'
 
 # === Programming Language ===
 brew 'elixir'
-brew 'go'
-brew 'pnpm'
-brew 'yarn'
+brew 'cmake'
 
 # === Cask ===
-cask 'docker'
-cask 'ngrok'
-cask 'iterm2'
-cask 'postman'
-cask 'visual-studio-code'
+# cask 'docker'
 cask 'dbeaver-community'
-cask 'pgadmin4'
-cask 'wireshark'
-# cask 'microsoft-teams'
-# cask 'figma'
-# mas 'LINE', id: 539883307
+cask 'wireshark-app'

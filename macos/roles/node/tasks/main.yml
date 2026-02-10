@@ -1,3 +1,27 @@
 ---
 
-name: "Check nvm is installed"
+- name: Check if nvm is installed
+  stat:
+    path: "{{ nvm_home }}"
+  register: nvm_installed
+
+- name: Install nvm
+  shell: >
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+  args:
+    creates: "{{ nvm_home }}/nvm.sh"
+  when: not nvm_installed.stat.exists
+
+- name: Install Node.js LTS
+  shell: |
+    {{ init_nvm }}
+    nvm install --lts
+  args:
+    executable: /bin/bash
+
+- name: Set Node.js LTS as default
+  shell: |
+    {{ init_nvm }}
+    nvm alias default lts/*
+  args:
+    executable: /bin/bash

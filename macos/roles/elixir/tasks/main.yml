@@ -1,0 +1,18 @@
+---
+
+- name: Verify elixir is installed
+  command: elixir --version
+  register: elixir_version
+  changed_when: false
+
+- name: Display elixir version
+  debug:
+    msg: "{{ elixir_version.stdout }}"
+
+- name: Install Hex package manager
+  command: mix local.hex --force
+  changed_when: false
+
+- name: Install Rebar
+  command: mix local.rebar --force
+  changed_when: false

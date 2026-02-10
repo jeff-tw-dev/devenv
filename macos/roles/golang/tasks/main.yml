@@ -1,0 +1,38 @@
+---
+
+- name: Check if gvm is installed
+  stat:
+    path: "{{ user.home }}/.gvm"
+  register: gvm_installed
+
+- name: Install gvm
+  shell: >
+    bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+  args:
+    executable: /bin/bash
+    creates: "{{ user.home }}/.gvm/scripts/gvm"
+  when: not gvm_installed.stat.exists
+
+- name: Update GVM
+  shell: |
+    source {{ user.home }}/.gvm/scripts/gvm
+    gvm get
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+
+- name: Install latest Go version (1.25.7)
+  shell: |
+    source {{ user.home }}/.gvm/scripts/gvm
+    gvm install go1.25.7 -B
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+
+- name: Set Go as default
+  shell: |
+    source {{ user.home }}/.gvm/scripts/gvm
+    gvm use go1.23.0 --default
+  args:
+    executable: /bin/bash
+  ignore_errors: yes

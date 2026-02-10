@@ -2,13 +2,20 @@
 
 - hosts: localhost
   roles:
+    # Fonts
+    - { role: font, tags: "font" }
+
+    # Programming languages
+    - { role: node, tags: "node" }
+    - { role: golang, tags: "golang" }
+    - { role: rust, tags: "rust" }
+    - { role: elixir, tags: "elixir" }
+    - { role: python, tags: "python" }
+    - { role: cpp, tags: "cpp" }
+
     # Shell
     - { role: zsh, tags: "zsh" }
-    
-    # Programming languages
-    # - { role: ruby, tags: "ruby" }
-    - { role: node, tags: "node" }
-    - { role: rust, tags: "rust" }
 
     # Editors
     - { role: nvim, tags: "neovim" }
+    - { role: vscode, tags: "vscode" }
