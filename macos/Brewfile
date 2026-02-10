@@ -45,7 +45,7 @@ brew 'git-lfs'
 brew 'lazygit'
 brew 'pre-commit'
 brew 'ghq'
-brew 'commitizen'
+brew 'czg'
 
 # === Encryption ===
 brew 'gnupg'
