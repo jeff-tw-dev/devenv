@@ -1,6 +1,7 @@
 tap 'jesseduffield/lazydocker'
 tap 'jesseduffield/lazygit'
 tap 'norwoodj/tap'
+tap 'steipete/tap' # gogcli
 
 # === Misc ===
 brew 'tldr'
@@ -28,6 +29,8 @@ brew 'kubectx'
 brew 'lazydocker'
 brew 'awscli'
 brew 'cloudflared'
+cask 'gcloud-cli'
+brew 'gogcli'
 
 # === File System ===
 brew 'z'
