@@ -21,7 +21,7 @@ export GPG_TTY=$(tty)
 export EDITOR='nvim'
 
 # Build ruby with homebrew openssl
-export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
+export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@3)"
 
 # Direnv integration¬
 eval "$(direnv hook zsh)"
@@ -115,9 +115,6 @@ export GHQ_ROOT="$HOME/Code"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH="$PATH:/Users/jeffhsu/flutter/bin"
-# aws/pulumi
-export AWS_REGION='us-east-1'
-export AWS_PROFILE='graidtech'
 
 [[ -s "/Users/jeffhsu/.gvm/scripts/gvm" ]] && source "/Users/jeffhsu/.gvm/scripts/gvm" && unset -f cd
 if command -v go >/dev/null 2>&1; then
@@ -133,3 +130,9 @@ export NVM_DIR="$HOME/.nvm"
 
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 . "$HOME/.local/bin/env"
+
+# OpenClaw Completion
+source "/Users/luca/.openclaw/completions/openclaw.zsh"
+
+# Added by Antigravity
+export PATH="/Users/luca/.antigravity/antigravity/bin:$PATH"
