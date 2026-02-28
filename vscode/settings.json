@@ -37,5 +37,6 @@
     },
     "emmet.includeLanguages": {
         "javascript": "javascriptreact"
-    }
+    },
+    "update.mode": "manual"
 }

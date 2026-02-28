@@ -30,7 +30,6 @@
         "command": "editor.action.showHover",
         "when": "editorTextFocus && vim.mode == 'Normal'"
     },
-
     // 📁 File Tree (like nvim-tree)
     {
         "key": "space n t",
@@ -45,52 +44,52 @@
     {
         "key": "a",
         "command": "explorer.newFile",
-        "when": "explorerViewletVisible && !inputFocus && vim.mode == 'Normal'"
+        "when": "filesExplorerFocus && !inputFocus && vim.mode == 'Normal'"
     },
     {
         "key": "d",
         "command": "deleteFile",
-        "when": "explorerViewletVisible && !inputFocus && vim.mode == 'Normal'"
+        "when": "filesExplorerFocus && !inputFocus && vim.mode == 'Normal'"
     },
     {
         "key": "r",
         "command": "renameFile",
-        "when": "explorerViewletVisible && !inputFocus && vim.mode == 'Normal'"
+        "when": "filesExplorerFocus && !inputFocus && vim.mode == 'Normal'"
     },
     {
         "key": "j",
         "command": "list.focusDown",
-        "when": "explorerViewletVisible && !inputFocus && vim.mode == 'Normal'"
+        "when": "filesExplorerFocus && !inputFocus && vim.mode == 'Normal'"
     },
     {
         "key": "k",
         "command": "list.focusUp",
-        "when": "explorerViewletVisible && !inputFocus && vim.mode == 'Normal'"
+        "when": "filesExplorerFocus && !inputFocus && vim.mode == 'Normal'"
     },
     {
         "key": "enter",
         "command": "list.toggleExpand",
-        "when": "explorerViewletVisible && !inputFocus && vim.mode == 'Normal'"
+        "when": "filesExplorerFocus && !inputFocus && vim.mode == 'Normal'"
     },
     {
         "key": "c",
         "command": "filesExplorer.copy",
-        "when": "explorerViewletVisible && !inputFocus && vim.mode == 'Normal'"
+        "when": "filesExplorerFocus && !inputFocus && vim.mode == 'Normal'"
     },
     {
         "key": "v",
         "command": "filesExplorer.paste",
-        "when": "explorerViewletVisible && !inputFocus && vim.mode == 'Normal'"
+        "when": "filesExplorerFocus && !inputFocus && vim.mode == 'Normal'"
     },
     {
         "key": "x",
         "command": "filesExplorer.cut",
-        "when": "explorerViewletVisible && !inputFocus && vim.mode == 'Normal'"
+        "when": "filesExplorerFocus && !inputFocus && vim.mode == 'Normal'"
     },
     {
         "key": "i",
         "command": "workbench.files.action.showActiveFileInExplorer",
-        "when": "explorerViewletVisible && !inputFocus && vim.mode == 'Normal'"
+        "when": "filesExplorerFocus && !inputFocus && vim.mode == 'Normal'"
     },
     // 🧭 Editor Window Splitting & Navigation
     {
