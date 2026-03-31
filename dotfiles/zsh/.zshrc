@@ -99,8 +99,11 @@ alias rosetta='arch -x86_64'
 alias py='python3'
 alias ogc='openapi-generator-cli'
 . /opt/homebrew/etc/profile.d/z.sh
+alias ccd='claude --dangerously-skip-permissions'
+alias ccp='claude --dangerously-skip-permissions -p'
 
 alias j='cd $(ghq list -p | fzf -1 -e)'
+alias jwd='echo $(ghq list -p | fzf -1 -e)'
 export GHQ_ROOT="$HOME/Code"
 
 # pnpm
@@ -121,9 +124,6 @@ if command -v go >/dev/null 2>&1; then
     export PATH="$PATH:$(go env GOPATH)/bin"
 fi
 
-# Added by Antigravity
-export PATH="/Users/jeffhsu/.antigravity/antigravity/bin:$PATH"
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
@@ -134,5 +134,3 @@ export NVM_DIR="$HOME/.nvm"
 # OpenClaw Completion
 source "/Users/luca/.openclaw/completions/openclaw.zsh"
 
-# Added by Antigravity
-export PATH="/Users/luca/.antigravity/antigravity/bin:$PATH"
