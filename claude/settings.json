@@ -2,6 +2,6 @@
   "skipDangerousModePermissionPrompt": true,
   "statusLine": {
     "type": "command",
-    "command": "sh /Users/jeffhsu/.claude/statusline-command.sh"
+    "command": "sh ~/.claude/statusline-command.sh"
   }
 }
