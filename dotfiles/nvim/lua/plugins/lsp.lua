@@ -22,7 +22,7 @@ return {
           "lua_ls",
           "rust_analyzer",
           "gopls",
-          "tsserver",
+          "ts_ls",
           "clangd",
           "tailwindcss",
           "svelte",
