@@ -269,22 +269,23 @@ tmux_conf_theme_right_separator_sub="|"
 #     - #{uptime_s}
 #     - #{username}
 #     - #{username_ssh}
-tmux_conf_theme_status_left=" ❐ #S | #h #{host_ip} | ↑#{?uptime_y, #{uptime_y}y,}#{?uptime_d, #{uptime_d}d,}#{?uptime_h, #{uptime_h}h,}#{?uptime_m, #{uptime_m}m,} "
+tmux_conf_theme_status_left=" ❐ #S | #{username} #{host_ip} | ↑#{?uptime_y, #{uptime_y}y,}#{?uptime_d, #{uptime_d}d,}#{?uptime_h, #{uptime_h}h,}#{?uptime_m, #{uptime_m}m,} "
 #tmux_conf_theme_status_left=" ❐ #S | ↑#{?uptime_y, #{uptime_y}y,}#{?uptime_d, #{uptime_d}d,}#{?uptime_h, #{uptime_h}h,}#{?uptime_m, #{uptime_m}m,} | #{pretty_pane_current_path} "
-tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized}#{tailscale_status} , #{net_speed} , CPU #{cpu_usage} MEM #{mem_usage} DSK #{disk_free} | #{battery_info} | Docker #{docker_status} | Claude #{claude_version} , ×#{claude_sessions} | #{code_repos} repos | %H:%M , %a %d %b "
+tmux_conf_theme_status_right=" #{?client_prefix,⌨ ,}#{?mouse,↗ ,}#{pairing}#{synchronized}#{tailscale_status} , #{net_speed} , CPU #{cpu_usage} MEM #{mem_usage} DSK #{disk_free} | #{battery_info} |#{docker_section} Claude #{claude_version} , ×#{claude_sessions} | %m/%d %H:%M "
 
 # status left style
 tmux_conf_theme_status_left_fg="$tmux_conf_theme_colour_6,$tmux_conf_theme_colour_7,$tmux_conf_theme_colour_8"
 tmux_conf_theme_status_left_bg="$tmux_conf_theme_colour_9,$tmux_conf_theme_colour_10,$tmux_conf_theme_colour_11"
 tmux_conf_theme_status_left_attr="bold,none,none"
 
-# status right style — 6 color-coded sections:
-#   1) sysinfo (muted gray)            2) Battery (transparent — fg colored inline by level)
-#   3) Docker (gruvbox blue)           4) Claude (Anthropic coral)
-#   5) Repos (gruvbox purple)          6) Time/Date (elevated gray, yellow accent)
-tmux_conf_theme_status_right_fg="#a89984,#ebdbb2,#ebdbb2,#1d2021,#1d2021,#fabd2f"
-tmux_conf_theme_status_right_bg="#3c3836,#282828,#458588,#cc785c,#b16286,#665c54"
-tmux_conf_theme_status_right_attr="none,bold,bold,bold,bold,bold"
+# status right style — 4 color-coded sections:
+#   1) sysinfo (muted gray)
+#   2) Battery (transparent — collapses when no battery; fg colored inline by level)
+#   3) Claude  (Anthropic coral) — also hosts the inline blue Docker block at its left edge
+#   4) Time/Date (elevated gray, yellow accent)
+tmux_conf_theme_status_right_fg="#a89984,#ebdbb2,#1d2021,#fabd2f"
+tmux_conf_theme_status_right_bg="#3c3836,#282828,#cc785c,#665c54"
+tmux_conf_theme_status_right_attr="none,bold,bold,bold"
 
 # pairing indicator
 tmux_conf_theme_pairing="⚇"                 # U+2687
@@ -570,22 +571,15 @@ tmux_conf_uninstall_plugins_on_reload=true
 #   pgrep -x claude 2>/dev/null | awk 'END {print NR+0}'
 # }
 #
-# # usage: #{docker_status} — running container count, "off" if daemon down, "-" if no docker
-# docker_status() {
-#   command -v docker >/dev/null 2>&1 || { printf '-'; return; }
+# # usage: #{docker_section} — paints a blue " Docker N" block, then flips bg
+# # back to coral so it sits flush against the Claude section that hosts it.
+# # Returns empty when docker is missing or the daemon is down, collapsing cleanly.
+# docker_section() {
+#   command -v docker >/dev/null 2>&1 || return
 #   out=$(docker ps -q 2>/dev/null); rc=$?
-#   if [ "$rc" -eq 0 ]; then
-#     printf '%s' "$out" | awk 'NF{n++} END{print n+0}'
-#   else
-#     printf 'off'
-#   fi
-# }
-#
-# # usage: #{code_repos} — count of git repos under ~/Code (any depth up to 5)
-# code_repos() {
-#   d="$HOME/Code"
-#   [ -d "$d" ] || { printf '-'; return; }
-#   find "$d" -maxdepth 5 -name .git -prune 2>/dev/null | awk 'END {print NR+0}'
+#   [ "$rc" -eq 0 ] || return
+#   n=$(printf '%s' "$out" | awk 'NF{c++} END{print c+0}')
+#   printf '#[fg=#ebdbb2,bg=#458588,bold] Docker %d #[fg=#1d2021,bg=#cc785c,bold]' "$n"
 # }
 #
 # # usage: #{host_ip} — primary outbound IPv4 (empty if no network)
