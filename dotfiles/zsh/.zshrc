@@ -119,11 +119,6 @@ export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH="$PATH:/Users/jeffhsu/flutter/bin"
 
-[[ -s "/Users/jeffhsu/.gvm/scripts/gvm" ]] && source "/Users/jeffhsu/.gvm/scripts/gvm" && unset -f cd
-if command -v go >/dev/null 2>&1; then
-    export PATH="$PATH:$(go env GOPATH)/bin"
-fi
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
