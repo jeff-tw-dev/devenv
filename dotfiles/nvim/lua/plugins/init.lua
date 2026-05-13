@@ -101,6 +101,9 @@ return {
   -- gitsigns
   require("plugins.gitsigns"),
 
+  -- diffview
+  require("plugins.diffview"),
+
   -- lualine
   require("plugins.lualine"),
 
