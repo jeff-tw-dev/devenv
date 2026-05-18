@@ -28,6 +28,7 @@ eval "$(direnv hook zsh)"
 
 # Set custom PATH
 export PATH=$PATH:$HOME/bin
+export PATH=$PATH:$HOME/scripts
 export PATH="/opt/homebrew/bin:$PATH"
 export PATH=$PATH:$HOME/.gvm
 
@@ -99,8 +100,6 @@ alias rosetta='arch -x86_64'
 alias py='python3'
 alias ogc='openapi-generator-cli'
 . /opt/homebrew/etc/profile.d/z.sh
-alias ccd='claude --dangerously-skip-permissions'
-alias ccp='claude --dangerously-skip-permissions -p'
 
 alias j='cd $(ghq list -p | fzf -1 -e)'
 alias jwd='echo $(ghq list -p | fzf -1 -e)'

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Create today's daily report in a workspace, following the structure of its daily-report.md.
+# Usage: ccp-daily-report [workspace]
+#   workspace  defaults to current directory; must contain a daily-report.md
+set -euo pipefail
+
+dir="${1:-.}"
+
+if [ ! -d "$dir" ]; then
+  echo "ccp-daily-report: '$dir' is not a directory" >&2
+  exit 1
+fi
+
+if [ ! -f "$dir/daily-report.md" ]; then
+  echo "ccp-daily-report: '$dir/daily-report.md' not found" >&2
+  exit 1
+fi
+
+date_str=$(date +%Y-%m-%d)
+out="daily-report-${date_str}.md"
+
+read -r -d '' prompt <<EOF || true
+Read daily-report.md in this workspace and treat it as the template/structure for daily reports. Create today's daily report for ${date_str} that follows the same structure, sections, and tone. Fill it in based on the current state of the workspace (recent commits, changes, tasks, notes, or any other relevant signals you can gather from the repo). Save the result to ${out} in this workspace. Do not modify daily-report.md itself.
+EOF
+
+cd "$dir"
+exec claude --model sonnet --dangerously-skip-permissions -p "$prompt"

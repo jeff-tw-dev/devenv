@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Explorable HTML explanation of a subject.
+# Usage: ccp-explain <subject> [output_file]
+#   subject     quote it if multi-word, e.g. "transformer attention"
+#   output_file defaults to explain-<slug>.html in current directory
+set -euo pipefail
+
+if [ $# -eq 0 ]; then
+  echo "Usage: ccp-explain <subject> [output_file]" >&2
+  exit 1
+fi
+
+subject="$1"
+out="${2:-}"
+
+if [ -z "$out" ]; then
+  slug=$(printf '%s' "$subject" \
+    | tr '[:upper:]' '[:lower:]' \
+    | tr -c '[:alnum:]' '-' \
+    | sed -E 's/-+/-/g; s/^-//; s/-$//')
+  out="explain-${slug}.html"
+fi
+
+read -r -d '' prompt <<EOF || true
+Conduct a deep dive into ${subject}. Produce a comprehensive analysis and present it as an explorable explanation in HTML format. Save the file to ${out}.
+EOF
+
+exec claude --model sonnet --dangerously-skip-permissions -p "$prompt"

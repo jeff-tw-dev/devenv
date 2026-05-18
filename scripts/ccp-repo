@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Deep dive into a software repository -> Markdown report.
+# Usage: ccp-repo [repo_path] [output_file]
+#   repo_path   defaults to current directory
+#   output_file defaults to REPO_DEEPDIVE.md (written inside repo_path)
+set -euo pipefail
+
+dir="${1:-.}"
+out="${2:-REPO_DEEPDIVE.md}"
+
+if [ ! -d "$dir" ]; then
+  echo "ccp-repo: '$dir' is not a directory" >&2
+  exit 1
+fi
+
+read -r -d '' prompt <<EOF || true
+Conduct a deep dive into this software repository. Cover its purpose and value proposition, project structure, design patterns, and system architecture. Supplement the analysis with diagrams wherever applicable, and conclude with a step-by-step onboarding guide written for beginners. Deliver the output as a Markdown document saved to ${out}.
+EOF
+
+cd "$dir"
+exec claude --model opus --dangerously-skip-permissions -p "$prompt"
