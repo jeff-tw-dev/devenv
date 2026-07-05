@@ -18,7 +18,7 @@ keymap.set("i", "jj", "<ESC>", { desc = "Exit insert mode" })
 keymap.set("n", "<leader>nt", ":NvimTreeToggle<CR>", { desc = "Toggle nvim-tree" })
 
 -- outline
-keymap.set("n", "<leader>o", ":SymbolsOutline<CR>", { desc = "Toggle outline" })
+keymap.set("n", "<leader>o", ":Outline<CR>", { desc = "Toggle outline" })
 
 -- telescope
 keymap.set("n", "<leader>f", "<cmd>Telescope find_files<cr>", { desc = "Fuzzy find files in cwd" })
