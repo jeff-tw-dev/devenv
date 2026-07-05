@@ -32,6 +32,12 @@ keymap.set("n", "<leader>p", "<cmd>Telescope resume<cr>", { desc = "Resume teles
 keymap.set("n", "<leader>cs", "<cmd>Telescope colorscheme<cr>", { desc = "Switch colorscheme" })
 keymap.set("n", "<leader>gb", "<cmd>Telescope git_branches<cr>", { desc = "Switch git branch" })
 
+-- git blame (gitsigns)
+keymap.set("n", "<leader>gB", "<cmd>Gitsigns blame<CR>", { desc = "Blame whole file (window)" })
+keymap.set("n", "<leader>gl", function()
+  require("gitsigns").blame_line({ full = true })
+end, { desc = "Blame current line (popup)" })
+
 -- splits
 keymap.set("n", "<leader>\"", "<cmd>split<CR>", { desc = "New horizontal split" })
 keymap.set("n", "<leader>%", "<cmd>vsplit<CR>", { desc = "New vertical split" })
