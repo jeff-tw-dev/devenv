@@ -95,6 +95,9 @@ return {
   -- outline
   require("plugins.outline"),
 
+  -- multicursor (VSCode cmd+D 風格多游標)
+  require("plugins.multicursor"),
+
   -- trouble
   require("plugins.trouble"),
 
