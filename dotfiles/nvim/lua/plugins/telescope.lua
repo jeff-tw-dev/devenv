@@ -6,6 +6,12 @@ return {
     {
       "nvim-telescope/telescope-fzf-native.nvim",
       build = "make",
+      -- skip entirely when there is no build toolchain, so startup
+      -- never errors on machines without make/cc
+      cond = function()
+        local deps = require("core.deps")
+        return deps.has("make") and deps.has_cc()
+      end,
     },
   },
   config = function()
@@ -33,6 +39,10 @@ return {
       },
     })
 
-    telescope.load_extension("fzf")
+    -- fall back to the built-in sorter when fzf-native is unavailable
+    -- (missing make/cc, or the native lib failed to build)
+    if not pcall(telescope.load_extension, "fzf") then
+      require("core.deps").note("make/cc", "telescope fzf 原生排序（已改用內建 sorter）")
+    end
   end,
 }

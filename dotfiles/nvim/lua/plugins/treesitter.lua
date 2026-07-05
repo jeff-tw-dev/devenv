@@ -6,8 +6,7 @@ return {
     "windwp/nvim-ts-autotag",
   },
   config = function()
-    require("nvim-treesitter.configs").setup({
-      ensure_installed = {
+    local ensure_installed = {
         "lua",
         "vim",
         "vimdoc",
@@ -33,7 +32,17 @@ return {
         "toml",
         "rust",
         "go",
-      },
+      }
+
+    -- parsers are compiled with a C compiler; without one, keep whatever
+    -- is already compiled and skip auto-install instead of erroring
+    if not require("core.deps").need_cc("treesitter parser 自動編譯") then
+      ensure_installed = {}
+    end
+
+    require("nvim-treesitter.configs").setup({
+      ensure_installed = ensure_installed,
+      auto_install = false,
       highlight = {
         enable = true,
       },

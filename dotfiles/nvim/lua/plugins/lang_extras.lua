@@ -14,6 +14,10 @@ return {
     "elixir-tools/elixir-tools.nvim",
     version = "*",
     event = { "BufReadPre", "BufNewFile" },
+    -- needs an elixir runtime to run nextls/elixirls; skip without it
+    cond = function()
+      return require("core.deps").need("elixir", "elixir-tools")
+    end,
     config = function()
       local elixir = require("elixir")
       local elixirls = require("elixir.elixirls")
@@ -23,7 +27,6 @@ return {
         credo = { enable = true },
         elixirls = {
           enable = true,
-          settings = cilr_ls_settings,
           on_attach = function(client, bufnr)
             -- vim.keymap.set("n", "<space>fp", ":ElixirFromPipe<cr>", { buffer = true, noremap = true })
             -- vim.keymap.set("n", "<space>tp", ":ElixirToPipe<cr>", { buffer = true, noremap = true })

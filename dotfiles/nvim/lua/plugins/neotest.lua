@@ -23,24 +23,35 @@ return {
     { "<leader>tS", function() require("neotest").run.stop() end, desc = "Stop" },
   },
   config = function()
+    local deps = require("core.deps")
+
+    -- only register adapters whose runtime exists on this machine
+    local adapters = {
+      require("neotest-plenary"),
+      require("neotest-gtest").setup({}),
+    }
+    if deps.need("python3", "neotest-python") then
+      table.insert(adapters, require("neotest-python")({
+        dap = { justMyCode = false },
+      }))
+    end
+    if deps.need("node", "neotest jest/vitest") then
+      table.insert(adapters, require("neotest-jest")({
+        jestCommand = "npm test --",
+        jestConfigFile = "custom.jest.config.ts",
+        env = { CI = true },
+        cwd = function(path)
+          return vim.fn.getcwd()
+        end,
+      }))
+      table.insert(adapters, require("neotest-vitest"))
+    end
+    if deps.need("elixir", "neotest-elixir") then
+      table.insert(adapters, require("neotest-elixir"))
+    end
+
     require("neotest").setup({
-      adapters = {
-        require("neotest-python")({
-          dap = { justMyCode = false },
-        }),
-        require("neotest-plenary"),
-        require("neotest-gtest").setup({}),
-        require("neotest-jest")({
-          jestCommand = "npm test --",
-          jestConfigFile = "custom.jest.config.ts",
-          env = { CI = true },
-          cwd = function(path)
-            return vim.fn.getcwd()
-          end,
-        }),
-        require("neotest-vitest"),
-        require("neotest-elixir"),
-      },
+      adapters = adapters,
     })
   end,
 }

@@ -15,6 +15,9 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- external dependency checks (must load before plugins use it in cond/config)
+require("core.deps")
+
 -- setup plugins
 require("lazy").setup("plugins")
 
