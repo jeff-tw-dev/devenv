@@ -125,6 +125,3 @@ export NVM_DIR="$HOME/.nvm"
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 . "$HOME/.local/bin/env"
 
-# OpenClaw Completion
-source "/Users/luca/.openclaw/completions/openclaw.zsh"
-
