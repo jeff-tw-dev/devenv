@@ -9,6 +9,7 @@ keymap.set("n", "<leader>ci", "<cmd>Telescope lsp_incoming_calls<CR>", { desc = 
 keymap.set("n", "<leader>co", "<cmd>Telescope lsp_outgoing_calls<CR>", { desc = "List outgoing calls" })
 keymap.set("n", "<S-k>", vim.lsp.buf.hover, { desc = "Peek type/doc of code under cursor" })
 keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", { desc = "Rename symbol across project" })
+keymap.set("n", "<leader>rN", "<cmd>Lspsaga rename ++project<CR>", { desc = "Rename symbol (project-wide preview)" })
 keymap.set("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>", { desc = "Code action" })
 
 -- exit insert mode
