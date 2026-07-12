@@ -92,9 +92,6 @@ return {
   -- lspsaga
   require("plugins.lspsaga"),
 
-  -- line bookmarks (toggle / list jump / delete from list)
-  require("plugins.bookmarks"),
-
   -- outline
   require("plugins.outline"),
 
