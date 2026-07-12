@@ -1,7 +1,10 @@
 return {
   "nvim-telescope/telescope.nvim",
   -- master, not 0.1.x: the 0.1.x previewer calls nvim-treesitter's removed
-  -- ft_to_lang() and errors whenever a preview opens (treesitter main branch)
+  -- ft_to_lang() and errors whenever a preview opens (treesitter main branch).
+  -- The branch must be explicit — with it omitted, lazy keeps tracking the
+  -- branch the existing clone was created from (0.1.x) and reverts on sync.
+  branch = "master",
   dependencies = {
     "nvim-lua/plenary.nvim",
     {
