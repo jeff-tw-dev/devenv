@@ -7,7 +7,7 @@ return {
 
     local set = vim.keymap.set
 
-    -- VSCode cmd+D：選游標下的字，再按加下一個相同字的游標
+    -- VSCode cmd+D: select the word under the cursor, press again to add a cursor at the next match
     set({ "n", "x" }, "<C-n>", function()
       mc.matchAddCursor(1)
     end, { desc = "MC: add cursor at next match" })
@@ -15,17 +15,17 @@ return {
       mc.matchAddCursor(-1)
     end, { desc = "MC: add cursor at prev match" })
 
-    -- VSCode cmd+K cmd+D：跳過當前 match，改選下一個
+    -- VSCode cmd+K cmd+D: skip the current match and take the next one
     set({ "n", "x" }, "<C-x>", function()
       mc.matchSkipCursor(1)
     end, { desc = "MC: skip current match" })
 
-    -- VSCode cmd+Shift+L：一次選取全部相同字
+    -- VSCode cmd+Shift+L: select all matches at once
     set({ "n", "x" }, "<leader>A", function()
       mc.matchAllAddCursors()
     end, { desc = "MC: add cursors to all matches" })
 
-    -- 上下相鄰行加游標（欄編輯）
+    -- add cursors on adjacent lines (column editing)
     set({ "n", "x" }, "<C-Up>", function()
       mc.lineAddCursor(-1)
     end, { desc = "MC: add cursor above" })
@@ -33,14 +33,14 @@ return {
       mc.lineAddCursor(1)
     end, { desc = "MC: add cursor below" })
 
-    -- 多游標啟用期間才生效的按鍵層
+    -- keymap layer active only while multiple cursors exist
     mc.addKeymapLayer(function(layerSet)
-      -- 在游標之間切換 focus
+      -- move focus between cursors
       layerSet({ "n", "x" }, "<left>", mc.prevCursor)
       layerSet({ "n", "x" }, "<right>", mc.nextCursor)
-      -- 刪掉當前 focus 的那顆游標
+      -- delete the focused cursor
       layerSet("n", "<leader>x", mc.deleteCursor)
-      -- Esc 清除所有額外游標，回到單游標
+      -- Esc clears all extra cursors, back to a single cursor
       layerSet("n", "<esc>", function()
         if not mc.cursorsEnabled() then
           mc.enableCursors()
@@ -50,7 +50,7 @@ return {
       end)
     end)
 
-    -- 高亮跟隨主題
+    -- highlights follow the colorscheme
     local hl = vim.api.nvim_set_hl
     hl(0, "MultiCursorCursor", { link = "Cursor" })
     hl(0, "MultiCursorVisual", { link = "Visual" })

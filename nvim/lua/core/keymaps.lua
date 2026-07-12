@@ -7,8 +7,8 @@ keymap.set("n", "<leader>r", "<cmd>Telescope lsp_references<CR>", { desc = "Go t
 keymap.set("n", "<leader>i", "<cmd>Telescope lsp_implementations<CR>", { desc = "Go to implementation" })
 keymap.set("n", "<leader>ci", "<cmd>Telescope lsp_incoming_calls<CR>", { desc = "List incoming calls" })
 keymap.set("n", "<leader>co", "<cmd>Telescope lsp_outgoing_calls<CR>", { desc = "List outgoing calls" })
--- code trace: 遞迴呼叫追蹤樹 (core/tracegraph)
--- 面板內：o 展開/收合、<CR> 跳呼叫點、gd 跳定義、p 預覽、s 切方向、q 關閉
+-- code trace: recursive call tree (core/tracegraph)
+-- panel keys: o expand/collapse, <CR> call site, gd definition, p preview, s direction, q quit
 keymap.set("n", "<leader>ct", function()
   require("core.tracegraph").open("incoming")
 end, { desc = "Trace callers (recursive tree)" })
@@ -29,11 +29,11 @@ keymap.set("n", "<leader>nt", ":NvimTreeToggle<CR>", { desc = "Toggle nvim-tree"
 -- outline
 keymap.set("n", "<leader>o", ":Outline<CR>", { desc = "Toggle outline" })
 
--- markdown render toggle (顯示原始 markdown / 渲染)
+-- markdown render toggle (raw markdown / rendered)
 keymap.set("n", "<leader>mr", "<cmd>RenderMarkdown toggle<CR>", { desc = "Toggle markdown render" })
--- markdown 瀏覽器預覽 (mermaid / 數學式)
+-- markdown browser preview (mermaid / math)
 keymap.set("n", "<leader>mp", "<cmd>MarkdownPreviewToggle<CR>", { desc = "Toggle markdown browser preview" })
--- mermaid → ASCII 浮動視窗 (游標所在區塊)
+-- mermaid block under cursor -> ASCII float
 keymap.set("n", "<leader>md", function()
   require("core.mermaid").render()
 end, { desc = "Render mermaid block as ASCII" })
@@ -51,14 +51,14 @@ keymap.set("n", "<leader>p", "<cmd>Telescope resume<cr>", { desc = "Resume teles
 keymap.set("n", "<leader>cs", "<cmd>Telescope colorscheme<cr>", { desc = "Switch colorscheme" })
 keymap.set("n", "<leader>gb", "<cmd>Telescope git_branches<cr>", { desc = "Switch git branch" })
 
--- project info (npm scripts/deps、make targets、cargo/go.mod 依賴)
--- 面板內：<CR> 跳到定義行、r 在 toggleterm 執行、q 關閉
+-- project info (npm scripts/deps, make targets, cargo/go.mod deps, env files)
+-- panel keys: <CR> jump to definition, r run in toggleterm, q quit
 keymap.set("n", "<leader>pi", function()
   require("core.projinfo").show()
 end, { desc = "Project info (scripts/deps/targets)" })
 
--- bookmarks (行級書籤)
--- 清單內：<CR> 跳轉、<C-d> 刪除該書籤；樹狀視圖可整批管理
+-- bookmarks (line-level)
+-- in the list: <CR> jump, <C-d> delete; the tree view manages in bulk
 keymap.set({ "n", "v" }, "<leader>bm", "<cmd>BookmarksMark<CR>", { desc = "Toggle bookmark on current line" })
 keymap.set("n", "<leader>bl", "<cmd>BookmarksGoto<CR>", { desc = "Bookmark list (jump / <C-d> delete)" })
 keymap.set("n", "<leader>bt", "<cmd>BookmarksTree<CR>", { desc = "Bookmark tree view" })

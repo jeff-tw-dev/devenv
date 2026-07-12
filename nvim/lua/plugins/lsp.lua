@@ -32,7 +32,7 @@ return {
       }
 
       local ensure_installed = { "lua_ls", "rust_analyzer", "clangd", "taplo" }
-      if deps.need("node", "JS/TS/Web LSP（ts_ls、tailwindcss、svelte、pyright、jsonls、yamlls）") then
+      if deps.need("node", "JS/TS/Web LSP (ts_ls, tailwindcss, svelte, pyright, jsonls, yamlls)") then
         vim.list_extend(ensure_installed, { "ts_ls", "tailwindcss", "svelte", "pyright", "jsonls", "yamlls" })
       end
       if deps.need("go", "gopls") then

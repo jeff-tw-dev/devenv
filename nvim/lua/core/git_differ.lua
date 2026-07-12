@@ -29,7 +29,7 @@ end
 local function load_commits()
   local lines = git({ "log", "--format=%h\t%ad\t%s", "--date=format:%Y-%m-%d" })
   if not lines then
-    vim.notify("Git differ: 這裡不是 git repo（或還沒有任何 commit）", vim.log.levels.WARN)
+    vim.notify("Git differ: not a git repo (or no commits yet)", vim.log.levels.WARN)
     return false
   end
   state.commits = {}
@@ -74,7 +74,7 @@ end
 
 local function announce()
   if state.index < 0 then
-    vim.notify("Git differ: working tree（尚未 commit 的變更）", vim.log.levels.INFO)
+    vim.notify("Git differ: working tree (uncommitted changes)", vim.log.levels.INFO)
   else
     local c = state.commits[state.index + 1]
     vim.notify(
@@ -105,7 +105,7 @@ local function render_msg_float()
     return
   end
   local lines = git({ "show", "-s", "--format=medium", "--date=format:%Y-%m-%d %H:%M", c.hash })
-    or { "(無法讀取 commit message)" }
+    or { "(failed to read commit message)" }
 
   if not (state.msg.buf and vim.api.nvim_buf_is_valid(state.msg.buf)) then
     state.msg.buf = vim.api.nvim_create_buf(false, true)
@@ -194,7 +194,7 @@ function M.older()
     state.index = -1
   end
   if state.index + 1 >= #state.commits then
-    vim.notify("Git differ: 已經是最舊的 commit", vim.log.levels.INFO)
+    vim.notify("Git differ: already at the oldest commit", vim.log.levels.INFO)
     return
   end
   open_at(state.index + 1)
@@ -209,7 +209,7 @@ function M.newer()
     return
   end
   if state.index <= -1 then
-    vim.notify("Git differ: 已經在最新的 working tree", vim.log.levels.INFO)
+    vim.notify("Git differ: already at the working tree", vim.log.levels.INFO)
     return
   end
   open_at(state.index - 1)
@@ -221,7 +221,7 @@ function M.toggle_message()
     return
   end
   if not view_is_open() or state.index < 0 then
-    vim.notify("Git differ: 目前是尚未 commit 的變更，沒有 commit message", vim.log.levels.INFO)
+    vim.notify("Git differ: viewing uncommitted changes, no commit message", vim.log.levels.INFO)
     return
   end
   render_msg_float()
@@ -288,7 +288,7 @@ function M.find_commit()
     return
   end
   commit_picker({
-    title = "搜尋 commit（訊息或日期，如 fix / 2026-07）",
+    title = "Search commits (message or date, e.g. fix / 2026-07)",
     on_select = function(c)
       open_at(index_of(c.hash))
     end,
@@ -301,11 +301,11 @@ function M.compare_commits()
     return
   end
   commit_picker({
-    title = "① 選擇基準 commit（較舊的 base）",
+    title = "1/2: pick the base commit (older side)",
     on_select = function(base)
       vim.schedule(function()
         commit_picker({
-          title = ("② 選擇目標 commit（與 %s 比較）"):format(base.hash),
+          title = ("2/2: pick the target commit (compare with %s)"):format(base.hash),
           on_select = function(target)
             state.navigating = true
             if view_is_open() then
@@ -318,7 +318,7 @@ function M.compare_commits()
               render_msg_float()
             end
             vim.notify(
-              ("Git differ: 比較 %s..%s（%s → %s）"):format(base.hash, target.hash, base.subject, target.subject),
+              ("Git differ: comparing %s..%s (%s -> %s)"):format(base.hash, target.hash, base.subject, target.subject),
               vim.log.levels.INFO
             )
           end,
@@ -341,28 +341,28 @@ function M.help()
 
   local lines = {
     "",
-    "  全域",
-    "    <leader>gd    開關 git diff 瀏覽器（working tree 未 commit 的變更）",
-    "    <leader>gp    ← 上一個（較舊）commit：該 commit 相對其父層改了什麼",
-    "    <leader>gn    → 下一個（較新）commit，走到底回到 working tree",
-    "    <leader>gf    搜尋 commit（fuzzy 比對訊息或日期），選中直接開 diff",
-    "    <leader>gc    自選兩個 commit 互相比較（先選 base 再選 target）",
-    "    <leader>gm    開關右上角 commit message 浮窗（隨瀏覽自動更新）",
-    "    <leader>g?    本說明",
-    "    <leader>gh    目前檔案的 commit 歷史",
-    "    <leader>gH    整個 branch 的 commit 歷史",
-    "    <leader>gb    切換 git branch（Telescope）",
+    "  Global",
+    "    <leader>gd    toggle the git diff browser (uncommitted working tree changes)",
+    "    <leader>gp    <- previous (older) commit: what that commit changed vs its parent",
+    "    <leader>gn    -> next (newer) commit, ends back at the working tree",
+    "    <leader>gf    fuzzy-search commits (message or date), open its diff on select",
+    "    <leader>gc    compare two arbitrary commits (pick base, then target)",
+    "    <leader>gm    toggle the commit-message float (auto-updates while browsing)",
+    "    <leader>g?    this help",
+    "    <leader>gh    commit history of the current file",
+    "    <leader>gH    commit history of the whole branch",
+    "    <leader>gb    switch git branch (Telescope)",
     "",
-    "  Diffview 面板內",
-    "    <C-j>/<C-k>   下一個 / 上一個 檔案（歷史面板則是 commit entry）",
-    "    <Tab>/<S-Tab> 切換檔案並開啟 diff（diffview 內建）",
-    "    [c / ]c       跳到上一個 / 下一個變更區塊（vim diff 內建）",
-    "    g?            diffview 內建完整說明",
+    "  Inside the Diffview panel",
+    "    <C-j>/<C-k>   next / previous file (commit entry in history panels)",
+    "    <Tab>/<S-Tab> select file and open its diff (diffview built-in)",
+    "    [c / ]c       jump to previous / next change hunk (vim diff built-in)",
+    "    g?            diffview's full built-in help",
     "",
-    "  提示：gp/gn 以「commit n 對 n-1」瀏覽每個 commit 的變更；",
-    "        用 gc 自選比較後，gp/gn 會從 target commit 繼續接著走。",
+    "  Tip: gp/gn browse each commit as \"commit n vs n-1\";",
+    "       after a gc comparison, gp/gn continue from the target commit.",
     "",
-    "  按 q 或 <Esc> 關閉本視窗",
+    "  Press q or <Esc> to close this window",
     "",
   }
 
@@ -385,7 +385,7 @@ function M.help()
     height = height,
     style = "minimal",
     border = "rounded",
-    title = " Git differ 快捷鍵 ",
+    title = " Git differ keymaps ",
     title_pos = "center",
   })
 

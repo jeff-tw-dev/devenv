@@ -58,9 +58,9 @@ function M.report()
   local bins = vim.tbl_keys(M.missing)
   table.sort(bins)
   vim.notify(
-    ("缺少 %s — 相關功能已自動停用，:DepsCheck 看詳情"):format(table.concat(bins, "、")),
+    ("missing %s — related features disabled, see :DepsCheck"):format(table.concat(bins, ", ")),
     vim.log.levels.INFO,
-    { title = "外部依賴" }
+    { title = "External dependencies" }
   )
 end
 
@@ -81,14 +81,14 @@ end
 ---------------------------------------------------------------------------
 
 local KNOWN = {
-  { bin = "node", feat = "JS/TS/Web/Python LSP（ts_ls、tailwindcss、svelte、pyright、jsonls、yamlls）、jest/vitest 測試" },
-  { bin = "go", feat = "gopls、go.nvim" },
-  { bin = "elixir", feat = "elixir-tools、elixirls、neotest-elixir" },
+  { bin = "node", feat = "JS/TS/Web/Python LSP (ts_ls, tailwindcss, svelte, pyright, jsonls, yamlls), jest/vitest tests" },
+  { bin = "go", feat = "gopls, go.nvim" },
+  { bin = "elixir", feat = "elixir-tools, elixirls, neotest-elixir" },
   { bin = "python3", feat = "neotest-python" },
-  { bin = "cargo", feat = "Rust 專案開發（rust-analyzer 由 mason 提供）" },
-  { bin = "make", feat = "telescope-fzf-native 編譯" },
-  { bin = "cc", feat = "treesitter parser 編譯（cc/gcc/clang 任一即可）" },
-  { bin = "tree-sitter", feat = "treesitter parser 自動安裝（brew install tree-sitter）" },
+  { bin = "cargo", feat = "Rust development (rust-analyzer itself comes from mason)" },
+  { bin = "make", feat = "telescope-fzf-native build" },
+  { bin = "cc", feat = "treesitter parser compilation (any of cc/gcc/clang)" },
+  { bin = "tree-sitter", feat = "treesitter parser auto-install (brew install tree-sitter)" },
   { bin = "rg", feat = "Telescope live_grep" },
 }
 
@@ -105,14 +105,14 @@ vim.api.nvim_create_user_command("DepsCheck", function()
   end
   if next(M.missing) then
     lines[#lines + 1] = ""
-    lines[#lines + 1] = "本次啟動已停用："
+    lines[#lines + 1] = "Disabled this session:"
     local bins = vim.tbl_keys(M.missing)
     table.sort(bins)
     for _, bin in ipairs(bins) do
-      lines[#lines + 1] = ("  %s → %s"):format(bin, table.concat(M.missing[bin], "、"))
+      lines[#lines + 1] = ("  %s → %s"):format(bin, table.concat(M.missing[bin], ", "))
     end
   end
   vim.notify(table.concat(lines, "\n"), vim.log.levels.INFO, { title = "DepsCheck" })
-end, { desc = "檢查外部依賴與被停用的功能" })
+end, { desc = "Check external dependencies and disabled features" })
 
 return M

@@ -4,7 +4,7 @@ return {
   build = ":TSUpdate",
   event = { "BufReadPost", "BufNewFile" },
   dependencies = {
-    -- 新版 autotag 獨立運作，不再透過 treesitter configs 啟用
+    -- autotag now runs standalone, no longer enabled through treesitter configs
     { "windwp/nvim-ts-autotag", opts = {} },
   },
   config = function()
@@ -36,20 +36,21 @@ return {
       "go",
     }
 
-    -- 新版 main branch 用 tree-sitter CLI 產生 parser 原始碼再以 C compiler
-    -- 編譯；兩者缺一就沿用既有 parser、跳過自動安裝
+    -- the main branch generates parser sources with the tree-sitter CLI and
+    -- compiles them with a C compiler; if either is missing, keep the existing
+    -- parsers and skip auto-install
     local deps = require("core.deps")
-    if deps.need("tree-sitter", "treesitter parser 自動安裝")
-        and deps.need_cc("treesitter parser 自動編譯") then
+    if deps.need("tree-sitter", "treesitter parser auto-install")
+        and deps.need_cc("treesitter parser compilation") then
       require("nvim-treesitter").install(ensure_installed)
     end
 
-    -- main branch 不再有 configs.setup 統一開關（incremental_selection 已被
-    -- 上游移除），highlight / indent 改由 FileType autocmd 逐 buffer 啟用
+    -- the main branch dropped the unified configs.setup (incremental_selection
+    -- was removed upstream); highlight / indent attach per buffer via FileType
     local function attach(buf, ft)
       local lang = vim.treesitter.language.get_lang(ft)
       if not (lang and pcall(vim.treesitter.start, buf, lang)) then
-        return -- 沒有對應 parser 就維持一般 regex highlight
+        return -- no parser for this filetype: keep regular regex highlight
       end
       vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
     end
@@ -61,7 +62,7 @@ return {
       end,
     })
 
-    -- 觸發本次載入的 buffer 可能已經 set 過 filetype，補跑一次
+    -- the buffer that triggered this load may already have its filetype set; catch up
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].filetype ~= "" then
         attach(buf, vim.bo[buf].filetype)

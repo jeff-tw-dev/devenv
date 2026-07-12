@@ -7,7 +7,7 @@ return {
   },
   -- don't load at all on machines without the go toolchain
   cond = function()
-    return require("core.deps").need("go", "go.nvim（Go 開發指令）")
+    return require("core.deps").need("go", "go.nvim (Go dev commands)")
   end,
   config = function()
     require("go").setup()
