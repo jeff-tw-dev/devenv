@@ -59,11 +59,6 @@ return {
     opts = {},
   },
 
-  -- bufdelete
-  {
-    "famiu/bufdelete.nvim",
-  },
-
   -- fuzzy finder
   require("plugins.telescope"),
 

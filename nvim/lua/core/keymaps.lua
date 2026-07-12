@@ -96,9 +96,13 @@ keymap.set("n", "<leader>%", "<cmd>vsplit<CR>", { desc = "New vertical split" })
 -- floating terminal
 keymap.set("n", "<leader>c", "<cmd>ToggleTerm<CR>", { desc = "Toggle floating terminal" })
 
--- buffers
-keymap.set("n", "<leader>w", "<cmd>Bdelete<CR>", { desc = "Close current buffer" })
-keymap.set("n", "<leader>q", "<cmd>bufdo bdelete<CR>", { desc = "Close all buffers" })
+-- buffers (core/bufclose: keep window layout when closing)
+keymap.set("n", "<leader>w", function()
+  require("core.bufclose").delete()
+end, { desc = "Close current buffer" })
+keymap.set("n", "<leader>q", function()
+  require("core.bufclose").delete_all()
+end, { desc = "Close all buffers" })
 keymap.set("n", "<leader>e", "<cmd>only<CR>", { desc = "Close all other windows" })
 
 -- Trouble.nvim
