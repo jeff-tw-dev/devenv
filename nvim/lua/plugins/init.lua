@@ -113,6 +113,12 @@ return {
   -- gitsigns
   require("plugins.gitsigns"),
 
+  -- magit-style git hub (status/stage/commit/branch/graph)
+  require("plugins.neogit"),
+
+  -- inline merge-conflict resolution
+  require("plugins.git-conflict"),
+
   -- diffview
   require("plugins.diffview"),
 
