@@ -88,6 +88,7 @@ local KNOWN = {
   { bin = "cargo", feat = "Rust 專案開發（rust-analyzer 由 mason 提供）" },
   { bin = "make", feat = "telescope-fzf-native 編譯" },
   { bin = "cc", feat = "treesitter parser 編譯（cc/gcc/clang 任一即可）" },
+  { bin = "tree-sitter", feat = "treesitter parser 自動安裝（brew install tree-sitter）" },
   { bin = "rg", feat = "Telescope live_grep" },
 }
 
