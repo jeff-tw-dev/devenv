@@ -92,6 +92,9 @@ return {
   -- lspsaga
   require("plugins.lspsaga"),
 
+  -- 行級書籤 (toggle/清單跳轉/清單刪除)
+  require("plugins.bookmarks"),
+
   -- outline
   require("plugins.outline"),
 

@@ -50,6 +50,14 @@ keymap.set("n", "<leader>p", "<cmd>Telescope resume<cr>", { desc = "Resume teles
 keymap.set("n", "<leader>cs", "<cmd>Telescope colorscheme<cr>", { desc = "Switch colorscheme" })
 keymap.set("n", "<leader>gb", "<cmd>Telescope git_branches<cr>", { desc = "Switch git branch" })
 
+-- bookmarks (行級書籤)
+-- 清單內：<CR> 跳轉、<C-d> 刪除該書籤；樹狀視圖可整批管理
+keymap.set({ "n", "v" }, "<leader>bm", "<cmd>BookmarksMark<CR>", { desc = "Toggle bookmark on current line" })
+keymap.set("n", "<leader>bl", "<cmd>BookmarksGoto<CR>", { desc = "Bookmark list (jump / <C-d> delete)" })
+keymap.set("n", "<leader>bt", "<cmd>BookmarksTree<CR>", { desc = "Bookmark tree view" })
+keymap.set("n", "]b", "<cmd>BookmarksGotoNext<CR>", { desc = "Next bookmark in buffer" })
+keymap.set("n", "[b", "<cmd>BookmarksGotoPrev<CR>", { desc = "Previous bookmark in buffer" })
+
 -- git blame (gitsigns)
 keymap.set("n", "<leader>gB", "<cmd>Gitsigns blame<CR>", { desc = "Blame whole file (window)" })
 keymap.set("n", "<leader>gl", function()
