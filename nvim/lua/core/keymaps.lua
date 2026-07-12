@@ -47,6 +47,10 @@ keymap.set("n", "<leader>fd", "<cmd>Telescope diagnostics<cr>", { desc = "Find d
 keymap.set("n", "<leader>fb", "<cmd>Telescope buffers<cr>", { desc = "Find buffer" })
 keymap.set("n", "<leader>fo", "<cmd>Telescope oldfiles<cr>", { desc = "Find recent files (last session first)" })
 keymap.set("n", "<leader>fk", "<cmd>Telescope keymaps<cr>", { desc = "Search keymaps" })
+-- cheatsheet: search every keymap incl. panel-local keys, <CR> jumps to definition
+keymap.set("n", "<leader>?", function()
+  require("core.cheatsheet").show()
+end, { desc = "Cheatsheet: search ALL keymaps incl. panel keys" })
 keymap.set("n", "<leader>p", "<cmd>Telescope resume<cr>", { desc = "Resume telescope" })
 keymap.set("n", "<leader>cs", "<cmd>Telescope colorscheme<cr>", { desc = "Switch colorscheme" })
 keymap.set("n", "<leader>gb", "<cmd>Telescope git_branches<cr>", { desc = "Switch git branch" })
