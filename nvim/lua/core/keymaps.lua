@@ -68,8 +68,10 @@ keymap.set("n", "[b", "<cmd>BookmarksGotoPrev<CR>", { desc = "Previous bookmark 
 -- neogit: git hub (in status buffer: s stage, c commit, b branch, p pull, P push, ? help)
 keymap.set("n", "<leader>gg", "<cmd>Neogit<CR>", { desc = "Neogit status (stage/commit/branch)" })
 keymap.set("n", "<leader>gL", "<cmd>Neogit log<CR>", { desc = "Git log with commit graph" })
--- merge conflicts (git-conflict): co ours, ct theirs, cb both, c0 none, ]x/[x navigate
-keymap.set("n", "<leader>gx", "<cmd>GitConflictListQf<CR>", { desc = "List all merge conflicts (quickfix)" })
+-- merge conflicts (core/conflict): co ours, ct theirs, cb both, c0 none, ]x/[x navigate
+keymap.set("n", "<leader>gx", function()
+  require("core.conflict").qf()
+end, { desc = "List all merge conflicts (quickfix)" })
 
 -- git blame (gitsigns)
 keymap.set("n", "<leader>gB", "<cmd>Gitsigns blame<CR>", { desc = "Blame whole file (window)" })

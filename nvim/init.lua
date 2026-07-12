@@ -24,3 +24,4 @@ require("lazy").setup("plugins")
 -- load core modules
 require("core.options")
 require("core.keymaps")
+require("core.conflict").setup()
