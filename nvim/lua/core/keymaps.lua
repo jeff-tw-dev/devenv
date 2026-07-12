@@ -50,6 +50,12 @@ keymap.set("n", "<leader>p", "<cmd>Telescope resume<cr>", { desc = "Resume teles
 keymap.set("n", "<leader>cs", "<cmd>Telescope colorscheme<cr>", { desc = "Switch colorscheme" })
 keymap.set("n", "<leader>gb", "<cmd>Telescope git_branches<cr>", { desc = "Switch git branch" })
 
+-- project info (npm scripts/deps、make targets、cargo/go.mod 依賴)
+-- 面板內：<CR> 跳到定義行、r 在 toggleterm 執行、q 關閉
+keymap.set("n", "<leader>pi", function()
+  require("core.projinfo").show()
+end, { desc = "Project info (scripts/deps/targets)" })
+
 -- bookmarks (行級書籤)
 -- 清單內：<CR> 跳轉、<C-d> 刪除該書籤；樹狀視圖可整批管理
 keymap.set({ "n", "v" }, "<leader>bm", "<cmd>BookmarksMark<CR>", { desc = "Toggle bookmark on current line" })
