@@ -95,6 +95,12 @@ return {
   -- outline
   require("plugins.outline"),
 
+  -- markdown 編輯器內即時渲染
+  require("plugins.render-markdown"),
+
+  -- markdown 瀏覽器預覽 (內建 mermaid / 數學式)
+  require("plugins.markdown-preview"),
+
   -- multicursor (VSCode cmd+D 風格多游標)
   require("plugins.multicursor"),
 

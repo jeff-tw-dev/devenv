@@ -21,6 +21,15 @@ keymap.set("n", "<leader>nt", ":NvimTreeToggle<CR>", { desc = "Toggle nvim-tree"
 -- outline
 keymap.set("n", "<leader>o", ":Outline<CR>", { desc = "Toggle outline" })
 
+-- markdown render toggle (顯示原始 markdown / 渲染)
+keymap.set("n", "<leader>mr", "<cmd>RenderMarkdown toggle<CR>", { desc = "Toggle markdown render" })
+-- markdown 瀏覽器預覽 (mermaid / 數學式)
+keymap.set("n", "<leader>mp", "<cmd>MarkdownPreviewToggle<CR>", { desc = "Toggle markdown browser preview" })
+-- mermaid → ASCII 浮動視窗 (游標所在區塊)
+keymap.set("n", "<leader>md", function()
+  require("core.mermaid").render()
+end, { desc = "Render mermaid block as ASCII" })
+
 -- telescope
 keymap.set("n", "<leader>f", "<cmd>Telescope find_files<cr>", { desc = "Fuzzy find files in cwd" })
 keymap.set("n", "<leader>ff", "<cmd>Telescope live_grep<cr>", { desc = "Find string in cwd" })
