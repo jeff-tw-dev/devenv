@@ -1,6 +1,7 @@
 return {
   "nvim-telescope/telescope.nvim",
-  branch = "0.1.x",
+  -- master, not 0.1.x: the 0.1.x previewer calls nvim-treesitter's removed
+  -- ft_to_lang() and errors whenever a preview opens (treesitter main branch)
   dependencies = {
     "nvim-lua/plenary.nvim",
     {
