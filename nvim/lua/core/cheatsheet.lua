@@ -84,6 +84,18 @@ local CONTEXT_KEYS = {
   ["mermaid float"] = {
     { "n", "q / <Esc>", "Close float" },
   },
+  ["llm marks panel"] = {
+    { "n", "<CR>", "Jump to mark" },
+    { "n", "dd", "Delete mark" },
+    { "n", "e", "Edit mark note" },
+    { "n", "C", "Clear all marks" },
+    { "n", "q", "Close panel" },
+  },
+  ["llm history panel"] = {
+    { "n", "<CR>", "Open exchange in vsplit" },
+    { "n", "dd", "Delete exchange" },
+    { "n", "q", "Close panel" },
+  },
 }
 
 ---------------------------------------------------------------------------
