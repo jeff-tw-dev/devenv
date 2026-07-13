@@ -1,7 +1,13 @@
 local keymap = vim.keymap
 
 -- lsp
-keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", { desc = "Go to definition" })
+-- gd is i18n-aware: on an i18n key string (t("a.b.c")) it jumps into the
+-- locale JSON instead; anywhere else it falls through to LSP definition
+keymap.set("n", "gd", function()
+  if not require("core.i18n").jump() then
+    vim.cmd("Telescope lsp_definitions")
+  end
+end, { desc = "Go to definition (i18n key aware)" })
 keymap.set("n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", { desc = "Go to type definition" })
 keymap.set("n", "<leader>r", "<cmd>Telescope lsp_references<CR>", { desc = "Go to references" })
 keymap.set("n", "<leader>i", "<cmd>Telescope lsp_implementations<CR>", { desc = "Go to implementation" })
@@ -15,7 +21,13 @@ end, { desc = "Trace callers (recursive tree)" })
 keymap.set("n", "<leader>cT", function()
   require("core.tracegraph").open("outgoing")
 end, { desc = "Trace callees (recursive tree)" })
-keymap.set("n", "<S-k>", vim.lsp.buf.hover, { desc = "Peek type/doc of code under cursor" })
+-- K is i18n-aware: on an i18n key string it floats every locale's
+-- translation; anywhere else it falls through to LSP hover
+keymap.set("n", "<S-k>", function()
+  if not require("core.i18n").peek() then
+    vim.lsp.buf.hover()
+  end
+end, { desc = "Peek type/doc (i18n translations on keys)" })
 keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", { desc = "Rename symbol across project" })
 keymap.set("n", "<leader>rN", "<cmd>Lspsaga rename ++project<CR>", { desc = "Rename symbol (project-wide preview)" })
 keymap.set("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>", { desc = "Code action" })

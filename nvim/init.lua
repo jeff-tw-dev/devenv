@@ -26,3 +26,4 @@ require("core.options")
 require("core.keymaps")
 require("core.conflict").setup()
 require("core.bookmarks").setup()
+require("core.i18n").setup() -- opts: { key_style = "nested"|"flat"|"auto", patterns = {...} }
