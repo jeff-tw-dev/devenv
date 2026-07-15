@@ -13,14 +13,8 @@ keymap.set("n", "<leader>r", "<cmd>Telescope lsp_references<CR>", { desc = "Go t
 keymap.set("n", "<leader>i", "<cmd>Telescope lsp_implementations<CR>", { desc = "Go to implementation" })
 keymap.set("n", "<leader>ci", "<cmd>Telescope lsp_incoming_calls<CR>", { desc = "List incoming calls" })
 keymap.set("n", "<leader>co", "<cmd>Telescope lsp_outgoing_calls<CR>", { desc = "List outgoing calls" })
--- code trace: recursive call tree (core/tracegraph)
--- panel keys: o expand/collapse, <CR> call site, gd definition, p preview, s direction, q quit
-keymap.set("n", "<leader>ct", function()
-  require("core.tracegraph").open("incoming")
-end, { desc = "Trace callers (recursive tree)" })
-keymap.set("n", "<leader>cT", function()
-  require("core.tracegraph").open("outgoing")
-end, { desc = "Trace callees (recursive tree)" })
+-- code trace (<leader>ct / <leader>cT): recursive call tree, now the
+-- standalone plugin jeff-tw-dev/tracegraph.nvim (see plugins/tracegraph.lua)
 -- K is i18n-aware: on an i18n key string it floats every locale's
 -- translation; anywhere else it falls through to LSP hover
 keymap.set("n", "<S-k>", function()
