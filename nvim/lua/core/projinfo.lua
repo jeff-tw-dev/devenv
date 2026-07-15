@@ -2,8 +2,9 @@
 -- npm scripts / dependencies (package.json), Makefile targets, Cargo.toml
 -- dependencies, go.mod requires, and .env* files.
 -- Panel keys: <CR> jump to the item's definition line, r run the item
--- (npm script / make target) in toggleterm, v reveal/mask env values,
--- a add a variable to the env file under the cursor, q close.
+-- (npm script / make target) in toggleterm, / fuzzy-search all items,
+-- v reveal/mask env values, a add a variable to the env file under the
+-- cursor, q close. M.search() also works standalone (<leader>ps).
 local M = {}
 
 local ns = vim.api.nvim_create_namespace("projinfo")
@@ -351,7 +352,7 @@ local function render()
   st.line_items, st.line_fold, st.header_line, st.fold_default = {}, {}, {}, {}
 
   lines[1] = " " .. vim.fn.fnamemodify(st.top, ":~")
-  lines[2] = " <CR>:jump  <Tab>:fold  zM/zR:fold all  r:run  v:reveal env  a:add env  q:quit"
+  lines[2] = " <CR>:jump  <Tab>:fold  zM/zR:fold all  /:search  r:run  v:reveal env  a:add env  q:quit"
   marks[#marks + 1] = { 0, 0, #lines[1], "Title" }
   marks[#marks + 1] = { 1, 0, #lines[2], "Comment" }
 
@@ -490,36 +491,154 @@ local function set_all_folds(val)
   pcall(vim.api.nvim_win_set_cursor, st.win, { hl or 1, 0 })
 end
 
--- re-scan manifests (after `a` writes a file) without losing fold state
-local function refresh()
-  local st = panel
-  local cur = vim.api.nvim_win_get_cursor(st.win)[1]
-  st.projects = find_projects(st.top)
-  table.sort(st.projects, function(a, b)
-    if (a.dir == st.nearest) ~= (b.dir == st.nearest) then
-      return a.dir == st.nearest
-    end
-    return a.dir < b.dir
-  end)
-  render()
-  pcall(vim.api.nvim_win_set_cursor, st.win, { math.min(cur, vim.api.nvim_buf_line_count(st.buf)), 0 })
-end
-
-function M.show()
-  local top, nearest = repo_root()
+-- projects sorted so the one the current buffer belongs to comes first
+local function sorted_projects(top, nearest)
   local projects = find_projects(top)
-  if #projects == 0 then
-    vim.notify("projinfo: no package.json / Makefile / Cargo.toml / go.mod / .env found under " .. top, vim.log.levels.INFO)
-    return
-  end
-
-  -- the project the current buffer belongs to comes first, then by path
   table.sort(projects, function(a, b)
     if (a.dir == nearest) ~= (b.dir == nearest) then
       return a.dir == nearest
     end
     return a.dir < b.dir
   end)
+  return projects
+end
+
+-- re-scan manifests (after `a` writes a file) without losing fold state
+local function refresh()
+  local st = panel
+  local cur = vim.api.nvim_win_get_cursor(st.win)[1]
+  st.projects = sorted_projects(st.top, st.nearest)
+  render()
+  pcall(vim.api.nvim_win_set_cursor, st.win, { math.min(cur, vim.api.nvim_buf_line_count(st.buf)), 0 })
+end
+
+---------------------------------------------------------------------------
+-- Full-text fuzzy search (Telescope) over every item of every project
+---------------------------------------------------------------------------
+
+-- Fuzzy-search across projects, sections, labels AND full detail text
+-- (script bodies, versions, env values). <CR> jumps to the definition
+-- line, <C-r> runs the item in toggleterm. Reuses the open panel's data
+-- when called from it; collects fresh otherwise.
+function M.search()
+  local top, nearest, projects, target_win
+  if panel then
+    top, nearest, projects = panel.top, panel.nearest, panel.projects
+    target_win = panel.prev_win
+    close()
+    if target_win and vim.api.nvim_win_is_valid(target_win) then
+      vim.api.nvim_set_current_win(target_win)
+    end
+  else
+    top, nearest = repo_root()
+    projects = sorted_projects(top, nearest)
+  end
+  if #projects == 0 then
+    vim.notify("projinfo: no package.json / Makefile / Cargo.toml / go.mod / .env found under " .. top, vim.log.levels.INFO)
+    return
+  end
+
+  local multi = #projects > 1
+  local entries = {}
+  for _, proj in ipairs(projects) do
+    local rel = proj.dir == top and "(root)" or proj.dir:sub(#top + 2)
+    for _, sec in ipairs(proj.sections) do
+      for _, it in ipairs(sec.items) do
+        local detail = it.detail or ""
+        if it.sensitive and not reveal_env then
+          detail = "••••••"
+        end
+        table.insert(entries, {
+          project = multi and rel or "",
+          section = sec.title,
+          label = it.label,
+          detail = detail,
+          item = it,
+        })
+      end
+    end
+  end
+
+  local pickers = require("telescope.pickers")
+  local finders = require("telescope.finders")
+  local conf = require("telescope.config").values
+  local entry_display = require("telescope.pickers.entry_display")
+  local actions = require("telescope.actions")
+  local action_state = require("telescope.actions.state")
+
+  local displayer = entry_display.create({
+    separator = "  ",
+    items = {
+      { width = multi and 18 or 1 },
+      { width = 24 },
+      { width = 28 },
+      { remaining = true },
+    },
+  })
+
+  pickers
+    .new({}, {
+      prompt_title = "Project info (fuzzy: name / detail / section)",
+      finder = finders.new_table({
+        results = entries,
+        entry_maker = function(e)
+          return {
+            value = e,
+            display = function(entry)
+              local v = entry.value
+              return displayer({
+                { v.project, "Comment" },
+                { v.section, "Statement" },
+                { v.label, v.item.run and "Function" or "Identifier" },
+                { v.detail, "Comment" },
+              })
+            end,
+            -- full-text: project + section + label + detail are all matchable
+            ordinal = ("%s %s %s %s"):format(e.project, e.section, e.label, e.detail),
+          }
+        end,
+      }),
+      sorter = conf.generic_sorter({}),
+      attach_mappings = function(prompt_bufnr, map)
+        actions.select_default:replace(function()
+          local entry = action_state.get_selected_entry()
+          actions.close(prompt_bufnr)
+          local it = entry and entry.value.item
+          if not it or not it.lnum then
+            return
+          end
+          vim.cmd.edit(vim.fn.fnameescape(it.path))
+          vim.api.nvim_win_set_cursor(0, { it.lnum, 0 })
+          vim.cmd("normal! zz")
+        end)
+        map({ "i", "n" }, "<C-r>", function()
+          local entry = action_state.get_selected_entry()
+          local it = entry and entry.value.item
+          if not it or not it.run then
+            vim.notify("projinfo: not a runnable item (only scripts / make targets)", vim.log.levels.INFO)
+            return
+          end
+          actions.close(prompt_bufnr)
+          local ok = pcall(function()
+            require("toggleterm").exec(it.run, nil, nil, it.cwd or top)
+          end)
+          if not ok then
+            vim.notify("projinfo: toggleterm unavailable, command: " .. it.run, vim.log.levels.WARN)
+          end
+        end)
+        return true
+      end,
+    })
+    :find()
+end
+
+function M.show()
+  local top, nearest = repo_root()
+  local projects = sorted_projects(top, nearest)
+  if #projects == 0 then
+    vim.notify("projinfo: no package.json / Makefile / Cargo.toml / go.mod / .env found under " .. top, vim.log.levels.INFO)
+    return
+  end
 
   if panel then
     close()
@@ -564,6 +683,7 @@ function M.show()
   vim.keymap.set("n", "<Esc>", close, opts)
   vim.keymap.set("n", "<Tab>", toggle_fold, opts)
   vim.keymap.set("n", "za", toggle_fold, opts)
+  vim.keymap.set("n", "/", M.search, opts)
   vim.keymap.set("n", "zM", function()
     set_all_folds(true)
   end, opts)

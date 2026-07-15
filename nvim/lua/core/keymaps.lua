@@ -68,10 +68,13 @@ keymap.set("n", "<leader>cs", "<cmd>Telescope colorscheme<cr>", { desc = "Switch
 keymap.set("n", "<leader>gb", "<cmd>Telescope git_branches<cr>", { desc = "Switch git branch" })
 
 -- project info (npm scripts/deps, make targets, cargo/go.mod deps, env files)
--- panel keys: <CR> jump to definition, r run in toggleterm, q quit
+-- panel keys: <CR> jump to definition, / fuzzy search, r run in toggleterm, q quit
 keymap.set("n", "<leader>pi", function()
   require("core.projinfo").show()
 end, { desc = "Project info (scripts/deps/targets)" })
+keymap.set("n", "<leader>ps", function()
+  require("core.projinfo").search()
+end, { desc = "Project info fuzzy search (scripts/deps/env)" })
 
 -- bookmarks (core/bookmarks): line bookmarks, JSON-persisted
 -- in the list panel: <CR> jump, dd delete, e edit note, q close

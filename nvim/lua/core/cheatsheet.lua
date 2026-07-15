@@ -21,6 +21,7 @@ local CONTEXT_KEYS = {
     { "n", "<CR>", "Jump to definition line" },
     { "n", "<Tab> / za", "Fold/unfold section or project" },
     { "n", "zM / zR", "Fold / unfold everything" },
+    { "n", "/", "Fuzzy-search all items (Telescope, <C-r> runs)" },
     { "n", "r", "Run script/target in toggleterm" },
     { "n", "v", "Reveal/mask env values" },
     { "n", "a", "Add env var to file under cursor" },
