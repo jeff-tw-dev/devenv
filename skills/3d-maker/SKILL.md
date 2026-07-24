@@ -1,67 +1,173 @@
-# Coordinate conventions by tool
+---
+name: 3d-orientation
+description: >-
+  Discipline for getting orientation, axes, and rotations right when writing
+  code or reasoning about 3D models and scenes. Use this WHENEVER a task
+  involves 3D space — placing/rotating objects, cameras, lights, lookAt,
+  quaternions or Euler angles, importing/exporting models (glTF, FBX, OBJ,
+  USD), or converting between tools (Three.js, Babylon.js, R3F, Blender, Unity,
+  Unreal, Godot, Maya, WebGL/WebGPU, OpenGL, DirectX). Trigger it even when the
+  user doesn't say "orientation" — any time something might end up sideways,
+  mirrored, upside-down, facing the wrong way, spinning the wrong direction, or
+  scaled wrong. 只要牽涉 3D 方向、座標系、旋轉、模型匯入匯出或跨工具轉換,就使用本 skill。
+---
 
-Read this to fill in a Coordinate Contract for a target that isn't already
-memorised. The two rock-solid, always-check fields are **Up axis** and
-**Handedness** — get those right and most bugs disappear. "Forward" is the
-treacherous one: it differs between *cameras* and *authored models* even inside
-one tool, so it's split out below.
+# 3D Orientation Discipline
 
-## Master table
+## Why this exists
 
-| Target | Up | Handedness | Camera looks along | Units (default) | Euler order | Notes |
-|---|---|---|---|---|---|---|
-| glTF 2.0 (format) | +Y | Right | n/a (asset front faces +Z) | metre | — | UV origin top-left; the interchange baseline for the web |
-| Three.js | +Y | Right | −Z | unitless (treat as m) | XYZ | `mesh.lookAt` points +Z at target; camera/light −Z |
-| Babylon.js | +Y | **Left** by default | +Z | unitless | — | Can switch to right-handed via `scene.useRightHandedSystem = true` |
-| React-Three-Fiber | +Y | Right | −Z | as Three.js | XYZ | Same as Three.js underneath |
-| OpenGL / WebGL | +Y | Right (world) | −Z (eye space) | — | — | NDC becomes left-handed after projection; texture origin **bottom-left** |
-| WebGPU / DirectX | +Y | Left | +Z | — | — | Texture origin top-left; NDC z in [0,1] |
-| Unity | +Y | **Left** | +Z (`transform.forward`) | metre | ZXY, degrees | +X right; on glTF import Z is flipped |
-| Unreal Engine | **+Z** | **Left** | +X (`ForwardVector`) | **centimetre** | degrees | +Y right; watch the cm scale on every import |
-| Godot 4 | +Y | Right | −Z | metre | — | Like OpenGL; `-Z` is a node's forward |
-| Blender | **+Z** | Right | −Y (front view / Numpad 1) | metre | XYZ (configurable) | RGB=XYZ gizmo originates here; export re-maps to Y-up |
-| Maya | +Y | Right | −Z | centimetre | — | +Z toward viewer |
-| 3ds Max | **+Z** | Right | −Y | inch/generic | — | Z-up like Blender/Unreal |
-| USD / USDZ | +Y (Y-up default; can be Z-up) | Right | — | metre (metersPerUnit) | — | Always read `upAxis` and `metersPerUnit` from the stage metadata |
-| FBX | author-dependent | author-dependent | — | author-dependent | — | Carries its own up-axis + unit-scale metadata; **never assume** — read it |
-| OBJ | none stored | none stored | — | none stored | — | No units, no up-axis, no handedness in the file; you must supply them |
+Directional bugs in 3D almost never come from bad math. They come from
+**silently assuming a coordinate convention**. "Up", "forward", "right", and
+"positive rotation" are not universal — every tool picks its own, and the
+conventions contradict each other (Y-up vs Z-up, right-handed vs left-handed,
+metres vs centimetres, +Z-forward vs −Z-forward). When you guess, you're right
+about half the time, which is exactly how you get a model lying on its side or
+a camera orbiting backwards.
 
-## Conversion recipes
+The fix is to stop treating orientation as intuition and start treating it as
+an **explicit, verified artifact**. Four rules do most of the work.
 
-Express every conversion as a coordinate remap, then verify with markers.
+---
 
-**Z-up (Blender/Unreal/Max) → Y-up (glTF/Three.js/Unity):**
-`(x, y, z) → (x, z, -y)`  ≡ rotate −90° about X.
+## Rule 1 — Write the Coordinate Contract before any code
 
-**Y-up → Z-up:** `(x, y, z) → (x, -z, y)`  ≡ rotate +90° about X.
+Before writing spatial code, state the target's conventions out loud as a
+comment block. Pull the values from `references/conventions.md`. Never leave any
+field as "probably the default".
 
-**Right-handed → left-handed (e.g. glTF → Unity/Unreal):** negate a single axis
-(commonly Z: `z → -z`) **and** reverse triangle winding order. If you flip the
-axis but forget the winding, faces cull from the wrong side / normals invert.
+```
+// COORDINATE CONTRACT
+// Target        : Three.js (r160)
+// Up axis       : +Y
+// Handedness    : right-handed
+// Forward       : camera looks down -Z; a Mesh's lookAt points +Z at target
+// Units         : 1 unit = 1 metre (my choice, stated so I stay consistent)
+// Rotation      : quaternions internally; Euler order 'XYZ', radians
+// UV origin     : (0,0) bottom-left in GLSL sampling; glTF textures top-left
+// Front face    : counter-clockwise winding
+```
 
-**Metres ↔ centimetres:** ×100 going to Unreal/Maya, ÷100 coming back. A model
-that's 100× too big or small is almost always this.
+Writing this first turns a hidden assumption into something you can check. If
+you can't fill a field, that's the bug you're about to hit — go find out.
 
-**UV vertical flip:** `v → 1 - v` when moving between bottom-left-origin
-(OpenGL) and top-left-origin (DirectX/glTF) texture spaces, or toggle the
-loader's `flipY`.
+## Rule 2 — Anchor reasoning to a concrete reference, and state the rotation rule
 
-## How to verify a conversion
+Never reason about "forward" in the abstract. Pin it to something physical:
 
-1. Place labeled markers before converting: cube at `(2,0,0)`, sphere at
-   `(0,2,0)`, cone at `(0,0,2)`.
-2. Apply the remap to the markers too.
-3. After import, confirm the cube is still on the target's +X, the sphere on +Y,
-   the cone on +Z, and that the front-facing side still faces the camera.
-4. If any marker is misplaced or a face is culled, the remap or the winding is
-   wrong — fix the mapping, don't add a per-object correction.
+- **A canonical figure at the origin**: a person standing on the ground plane,
+  head toward +up, face toward +forward, right arm toward +right. Map every
+  direction you talk about back to this figure.
+- **An RGB gizmo**: X = red, Y = green, Z = blue (the convention Blender, Unity,
+  Godot, etc. all use). When you say "+Z", picture the blue arrow.
 
-## Sources of the "forward" trap, restated
+For rotation *sign*, state the rule explicitly every time instead of guessing:
 
-- A **camera/eye** forward and an **authored model's** front are independent.
-  Three.js proves it: same engine, camera forward = −Z, mesh `lookAt` forward =
-  +Z.
-- glTF says an asset's *front* faces +Z, but OpenGL-style cameras look down −Z —
-  so a default-oriented glTF model faces the camera. Expected, but surprising.
-- Always separate "which way does the lens point" from "which way was the mesh
-  modelled" in your Coordinate Contract.
+- **Right-handed system**: point your right thumb along the +axis; your fingers
+  curl in the direction of *positive* rotation (counter-clockwise when the axis
+  points toward you).
+- **Left-handed system** (Unity, Unreal, DirectX): use the left hand — positive
+  rotation is clockwise when the axis points toward you.
+
+Getting handedness wrong is the #1 cause of "it spins the wrong way" and of
+inverted normals / wrong-side culling.
+
+## Rule 3 — Compute rotations, don't intuit them
+
+Guessing an Euler triple like `(0, 90, 0)` is where models hallucinate. Instead:
+
+- Write the **basis vectors** you want (new forward, up, right), then build a
+  matrix or quaternion from them. `right = normalize(cross(up, forward))` in a
+  right-handed system (swap operands or negate for left-handed — derive it, and
+  verify with the hand rule from Rule 2).
+- Prefer engine helpers over hand-rolled Euler math: `Matrix4.lookAt` /
+  `Quaternion.setFromUnitVectors` / `quatFromForwardUp`, not three chained
+  `rotateX/Y/Z` calls whose order you're unsure of.
+- Use **quaternions** for composing/interpolating rotations; treat Euler angles
+  as input/output only, and always name the order (XYZ, ZXY, …) explicitly.
+
+## Rule 4 — Build a verification harness before declaring success
+
+You cannot see the scene, so make the scene tell you if it's right. Before
+saying a 3D task is done, add cheap ground truth:
+
+- Drop **RGB axis arrows** at the origin (X-red, Y-green, Z-blue) so up/forward
+  are visible.
+- Place **labeled reference markers**: a small cube at `+X`, a sphere at `+Y`, a
+  cone at `+Z`, and one object at a known position like `(2, 0, 0)`.
+- **Print world positions / directions** of key objects and check the signs
+  against the Coordinate Contract.
+- When a renderer is available, **render one frame from a known camera and
+  inspect it** (rasterise to an image and actually look), rather than trusting
+  that the transform "looks right" in code.
+
+If any marker lands where the contract says it shouldn't, stop and fix the
+convention — don't patch it with a mystery `* -1`.
+
+---
+
+## Cross-tool conversion: only via an explicit axis map
+
+Most import/export bugs are a Z-up↔Y-up or handedness flip applied by accident.
+Never eyeball it — write the mapping as an equation.
+
+**Blender (Z-up, right-handed) → glTF / Three.js (Y-up, right-handed):**
+`(x, y, z)_blender → (x, z, -y)_gltf` — i.e. rotate −90° about X.
+
+**Y-up (glTF) → Z-up (Blender/Unreal):** `(x, y, z) → (x, -z, y)`, i.e. +90°
+about X.
+
+**Right-handed → left-handed (e.g. glTF → Unity):** negate one axis (Unity
+flips Z: `z → -z`) *and* reverse triangle winding, or normals/culling invert.
+
+Full per-tool table and more recipes are in `references/conventions.md` — read
+it whenever the target isn't already in your Coordinate Contract.
+
+---
+
+## Recipes for the operations that go wrong most
+
+**Make object A face object B.** Decide which local axis is A's *modeled* front,
+then reconcile it with the engine's lookAt convention — they often differ. In
+Three.js, `camera.lookAt` points local −Z at the target, but `mesh.lookAt`
+points local +Z. If your model was authored facing a different axis, apply a
+fixed offset quaternion once rather than fighting it per-frame.
+
+**Orbit a camera around a target.** Rotate a position *offset* vector around the
+world up axis, then set `camera.position = target + offset` and `camera.lookAt(
+target)`. Bugs here are almost always: wrong up axis, or a left/right-handed
+sign flip making it orbit backwards — check against Rule 2.
+
+**Rotate 90° about a world axis vs a local axis.** These are different
+operations. World: `q_world * q_object`. Local: `q_object * q_local`. State
+which one you mean; "rotate it 90°" is ambiguous until you say world or local.
+
+**Model imports lying on its side.** Almost always a Z-up asset in a Y-up engine.
+Fix at the source (correct export up-axis) or apply the −90°-about-X map above —
+not a random per-object tweak.
+
+**Model imports mirrored / inside-out.** A handedness flip without a matching
+winding reversal. Flip winding order or normals, or negate the axis consistently
+across geometry *and* transforms.
+
+---
+
+## Pitfalls quick reference
+
+| Symptom | Likely cause | Fix |
+|---|---|---|
+| Object on its side after import | Z-up asset in Y-up engine | Rotate −90° about X, or fix export up-axis |
+| Everything mirrored / inside-out | Handedness flip w/o winding reversal | Reverse winding or flip one axis consistently |
+| Rotation goes the wrong way | Wrong handedness assumption for sign | Re-derive with the hand rule (Rule 2) |
+| Object faces away from target | Engine lookAt axis ≠ model's front axis | Offset quaternion; verify which axis is "forward" |
+| Backfaces / holes in the mesh | Winding vs cull-face mismatch | Match winding order to the front-face convention |
+| Textures upside-down | UV origin top-left vs bottom-left | Flip V (`v → 1 - v`) or set the loader's flipY |
+| Model 100× too big/small | Unit mismatch (cm vs m) | Apply scale; Unreal = cm, glTF/most = m |
+| Euler rotation looks scrambled | Wrong Euler order assumed | Name and match the order; prefer quaternions |
+
+---
+
+## The loop, in one line
+
+Contract → anchor + hand-rule → compute (quaternions) → **verify with a gizmo/
+render** → only then done. If verification fails, fix the *convention*, never
+sprinkle sign flips.
